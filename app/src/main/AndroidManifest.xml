@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
 
     <application
         android:allowBackup="true"
@@ -13,9 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RoadRuler"
+        android:name=".ui.RoadRulerApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,10 +26,10 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.RoadRulerService" />
+        <receiver android:name=".domain.services.ActivityTransitionReceiver" />
 
         <receiver
-            android:name=".services.RestartService"
+            android:name=".domain.services.OnBootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
