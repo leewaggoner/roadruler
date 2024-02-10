@@ -6,9 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.shouldShowRationale
 import com.wreckingballsoftware.roadruler.R
 
 
@@ -16,10 +14,13 @@ import com.wreckingballsoftware.roadruler.R
 @Composable
 fun CheckPermissions(
     permissions: List<String>,
-    permissionTextIds: List<Int>,
-    rationaleTextIds: List<Int>,
     content: @Composable () -> Unit
 ) {
+    if (permissions.isEmpty()) {
+        content()
+        return
+    }
+
     val permissionState = rememberMultiplePermissionsState(
         permissions = permissions
     )
@@ -27,25 +28,21 @@ fun CheckPermissions(
     if (permissionState.allPermissionsGranted) {
         content()
     } else {
-        permissionState.permissions.forEachIndexed { index, granted ->
-            if (!granted.status.isGranted) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    RoadRulerAlert(
-                        title = stringResource(id = R.string.grant_permissions),
-                        message = if (granted.status.shouldShowRationale) {
-                            stringResource(id = rationaleTextIds[index])
-                        } else {
-                            stringResource(id = permissionTextIds[index])
-                        },
-                        onDismissRequest = { },
-                        onConfirmAlert = { permissionState.launchMultiplePermissionRequest() },
-                        onDismissAlert = null,
-                    )
-                }
-            }
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            RoadRulerAlert(
+                title = stringResource(id = R.string.grant_permissions_title),
+                message = if (permissionState.shouldShowRationale) {
+                    stringResource(id = R.string.permission_rationale)
+                } else {
+                    stringResource(id = R.string.need_permission)
+                },
+                onDismissRequest = { },
+                onConfirmAlert = { permissionState.launchMultiplePermissionRequest() },
+                onDismissAlert = null,
+            )
         }
     }
 }
