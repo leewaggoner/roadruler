@@ -1,18 +1,19 @@
 package com.wreckingballsoftware.roadruler.ui.mainscreen
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
-import com.wreckingballsoftware.roadruler.data.repos.ActivityTransitionRepo
+import com.wreckingballsoftware.roadruler.data.ActivityTransition
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainScreenViewModel(
-    context: Context,
+@HiltViewModel
+class MainScreenViewModel @Inject constructor(
     handle: SavedStateHandle,
-    activityTransitionRepo: ActivityTransitionRepo,
+    activityTransition: ActivityTransition,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -20,9 +21,11 @@ class MainScreenViewModel(
     }
 
     init {
-        activityTransitionRepo.startTracking(
+        activityTransition.startTracking(
             onSuccess = { },
-            onFailure = { },
+            onFailure = { message ->
+                val failed = message
+            },
         )
     }
 }

@@ -7,13 +7,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
-import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MainScreen(
     navGraph: NavGraph,
-    viewModel: MainScreenViewModel = getViewModel(),
+    viewModel: MainScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state
     Column(

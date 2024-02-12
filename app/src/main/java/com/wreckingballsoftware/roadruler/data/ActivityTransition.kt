@@ -11,8 +11,14 @@ import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
 import com.google.android.gms.location.DetectedActivity
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object ActivityTransition {
+@Singleton
+class ActivityTransition @Inject constructor(
+    @ApplicationContext val context: Context
+) {
     private val transitions = listOf(
         ActivityTransition.Builder()
             .setActivityType(DetectedActivity.STILL)
@@ -58,13 +64,12 @@ object ActivityTransition {
 
     @SuppressWarnings("MissingPermission")
     fun startTracking(
-        context: Context,
         onSuccess: () -> Unit = { },
         onFailure: (String) -> Unit = { }
     ) {
         val request = ActivityTransitionRequest(transitions)
-        if (permissionGranted(context)) {
-            val intent = Intent(context, ActivityTransitionProvider::class.java)
+        if (permissionGranted()) {
+            val intent = Intent(context, ActivityTransitionReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 0,
@@ -81,7 +86,7 @@ object ActivityTransition {
         }
     }
 
-    private fun permissionGranted(context: Context): Boolean {
+    private fun permissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ActivityCompat.checkSelfPermission(
                 context,
