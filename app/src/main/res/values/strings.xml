@@ -7,4 +7,6 @@
     <string name="permission_rationale">Road Ruler needs these permissions to track your driving miles.</string>
     <string name="error">Error</string>
     <string name="must_allow_activity_recognition_permission">You must grant the physical activity permission for Road Ruler to operate correctly.</string>
+    <string name="notification_action_text">Launch Road Ruler.</string>
+    <string name="notification_text">Road Ruler is tracking your mileage.</string>
 </resources>

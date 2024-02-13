@@ -1,12 +1,17 @@
 package com.wreckingballsoftware.roadruler.ui.compose
 
+import android.os.Build
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.wreckingballsoftware.roadruler.R
 
 
@@ -26,6 +31,18 @@ fun CheckPermissions(
     )
 
     if (permissionState.allPermissionsGranted) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val fineIsGranted = ContextCompat.checkSelfPermission(LocalContext.current, android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            val backgroundIsGranted = ContextCompat.checkSelfPermission(LocalContext.current, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (fineIsGranted && !backgroundIsGranted) {
+                val activityPermissionState = rememberPermissionState(
+                    permission = android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                )
+                LaunchedEffect(key1 = Unit) {
+                    activityPermissionState.launchPermissionRequest()
+                }
+            }
+        }
         content()
     } else {
         Surface(
@@ -40,7 +57,9 @@ fun CheckPermissions(
                     stringResource(id = R.string.need_permission)
                 },
                 onDismissRequest = { },
-                onConfirmAlert = { permissionState.launchMultiplePermissionRequest() },
+                onConfirmAlert = {
+                    permissionState.launchMultiplePermissionRequest()
+                },
                 onDismissAlert = null,
             )
         }

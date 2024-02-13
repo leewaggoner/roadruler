@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.roadruler.data
+package com.wreckingballsoftware.roadruler.domain.services
 
 import android.Manifest
 import android.app.PendingIntent
@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
@@ -77,10 +78,14 @@ class ActivityTransition @Inject constructor(
                 PendingIntent.FLAG_IMMUTABLE)
             ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent)
-                .addOnSuccessListener { onSuccess() }
+                .addOnSuccessListener {
+                    Log.d("-----LEE-----", "Activity recognition started")
+                    onSuccess()
+                }
                 .addOnFailureListener { exception ->
                     val message =
                         "Activity recognition could not be started: ${exception.message}"
+                    Log.d("-----LEE-----", message)
                     onFailure(message)
                 }
         }
