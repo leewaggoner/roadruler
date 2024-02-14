@@ -1,6 +1,5 @@
 package com.wreckingballsoftware.roadruler.ui.mainscreen
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,10 +21,7 @@ class MainScreenViewModel @Inject constructor(
     }
 
     init {
-        Log.d("-----LEE-----", "MainScreenViewModel: init")
         activityTransition.startTracking(
-            onSuccess = {
-            },
             onFailure = { message ->
                 val failed = message
             },

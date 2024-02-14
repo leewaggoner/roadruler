@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.wreckingballsoftware.roadruler.data.datasources.DataStoreWrapper
+import com.wreckingballsoftware.roadruler.domain.services.ActivityTransition
 import com.wreckingballsoftware.roadruler.ui.navigation.RoadRulerHost
 import com.wreckingballsoftware.roadruler.ui.theme.RoadRulerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +22,8 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStoreWrapper: DataStoreWrapper
+    @Inject
+    lateinit var activityTransition: ActivityTransition
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,5 +47,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activityTransition.stopTracking()
     }
 }

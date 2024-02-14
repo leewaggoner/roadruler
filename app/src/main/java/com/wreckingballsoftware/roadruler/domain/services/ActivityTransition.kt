@@ -20,7 +20,60 @@ import javax.inject.Singleton
 class ActivityTransition @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    private val transitions = listOf(
+    private val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        0,
+        Intent(context, ActivityTransitionReceiver::class.java),
+        PendingIntent.FLAG_MUTABLE)
+
+    @SuppressWarnings("MissingPermission")
+    fun startTracking(
+        onSuccess: () -> Unit = { },
+        onFailure: (String) -> Unit = { }
+    ) {
+        val request = ActivityTransitionRequest(getTransitions())
+        if (permissionGranted()) {
+            ActivityRecognition.getClient(context)
+                .requestActivityTransitionUpdates(request, pendingIntent)
+                .addOnSuccessListener {
+                    Log.d("-----LEE-----", "Activity recognition started")
+                    onSuccess()
+                }
+                .addOnFailureListener { exception ->
+                    val message = "Activity recognition could not be started: ${exception.message}"
+                    Log.d("-----LEE-----", message)
+                    onFailure(message)
+                }
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    fun stopTracking() {
+        if (permissionGranted()) {
+            ActivityRecognition.getClient(context).removeActivityTransitionUpdates(pendingIntent)
+                .addOnSuccessListener {
+                    pendingIntent.cancel()
+                    Log.d("-----LEE-----", "Activity recognition canceled")
+                }
+                .addOnFailureListener { exception ->
+                    val message = "Activity recognition could not be canceled: ${exception.message}"
+                    Log.e("-----LEE-----", message)
+                }
+        }
+    }
+
+    private fun permissionGranted(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    private fun getTransitions() = listOf(
         ActivityTransition.Builder()
             .setActivityType(DetectedActivity.STILL)
             .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
@@ -62,43 +115,4 @@ class ActivityTransition @Inject constructor(
             .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
             .build(),
     )
-
-    @SuppressWarnings("MissingPermission")
-    fun startTracking(
-        onSuccess: () -> Unit = { },
-        onFailure: (String) -> Unit = { }
-    ) {
-        val request = ActivityTransitionRequest(transitions)
-        if (permissionGranted()) {
-            val intent = Intent(context, ActivityTransitionReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_MUTABLE)
-            ActivityRecognition.getClient(context)
-                .requestActivityTransitionUpdates(request, pendingIntent)
-                .addOnSuccessListener {
-                    Log.d("-----LEE-----", "Activity recognition started")
-                    onSuccess()
-                }
-                .addOnFailureListener { exception ->
-                    val message =
-                        "Activity recognition could not be started: ${exception.message}"
-                    Log.d("-----LEE-----", message)
-                    onFailure(message)
-                }
-        }
-    }
-
-    private fun permissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
-    }
 }

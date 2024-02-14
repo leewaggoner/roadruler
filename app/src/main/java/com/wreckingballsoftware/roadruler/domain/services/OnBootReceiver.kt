@@ -13,13 +13,10 @@ class OnBootReceiver : BroadcastReceiver() {
     lateinit var activityTransition: ActivityTransition
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("-----LEE-----", "Received broadcast: ${intent?.action ?: "null action"}")
-        activityTransition.startTracking(
-            onSuccess = {
-                Log.d("-----LEE-----", "Activity tracking started")
-            },
-            onFailure = { message ->
-                Log.d("-----LEE-----", "Failed to start activity tracking: $message")
-            },
-        )
+//        activityTransition.startTracking(
+//            onFailure = { message ->
+//                Log.d("-----LEE-----", "Failed to start activity tracking: $message")
+//            },
+//        )
     }
 }

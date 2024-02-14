@@ -29,6 +29,7 @@ class ActivityTransitionReceiver : BroadcastReceiver() {
         for (event in transitionEvents) {
             val transition = "${mapTransitionToString(event)} ${mapActivityToString(event)}"
             val intent = Intent(context, MileageService::class.java)
+            Log.d("-----LEE-----", "ActivityTransitionReceiver: $transition")
             intent.putExtra(TRANSITION, transition)
             context.startForegroundService(intent)
         }

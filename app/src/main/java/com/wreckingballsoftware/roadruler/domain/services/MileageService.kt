@@ -16,16 +16,18 @@ import com.wreckingballsoftware.roadruler.ui.MainActivity
 
 
 class MileageService : Service() {
+    private val notification: Notification = getNotification()
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("-----LEE-----", "MileageService: onStartCommand")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             startForeground(
                 NOTIFICATION_ID,
-                getNotification(),
+                notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION,
             )
         } else {
-            startForeground(NOTIFICATION_ID, getNotification())
+            startForeground(NOTIFICATION_ID, notification)
         }
 
         intent?.let { mileageIntent ->
@@ -46,25 +48,14 @@ class MileageService : Service() {
         val activityPendingIntent = PendingIntent.getActivity(
             this,
             0,
-            Intent(
-                this,
-                MainActivity::class.java
-            ), PendingIntent.FLAG_IMMUTABLE
+            Intent( this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
         )
-        val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .addAction(
-                R.drawable.ic_launcher_foreground,
-                getString(R.string.notification_action_text),
-                activityPendingIntent
-            )
-            .setContentIntent(activityPendingIntent)
-            .setContentText(getString(R.string.notification_text))
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
-            .setOngoing(true)
+            .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                builder.foregroundServiceBehavior = Notification.FOREGROUND_SERVICE_IMMEDIATE
-            }
+            .setContentIntent(activityPendingIntent)
 
         createServiceNotificationChannel()
 
@@ -78,15 +69,12 @@ class MileageService : Service() {
             NOTIFICATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        channel.setSound(null, null)
-        channel.description = NOTIFICATION_CHANNEL_DESC
         notificationManager.createNotificationChannel(channel)
     }
 
     companion object {
         private const val CHANNEL_ID = "channel_01"
         private const val NOTIFICATION_CHANNEL_NAME = "RoadRuler"
-        private const val NOTIFICATION_CHANNEL_DESC = "RoadRulerChannel"
         private const val NOTIFICATION_ID = 92009
     }
 }
