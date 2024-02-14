@@ -75,7 +75,7 @@ class ActivityTransition @Inject constructor(
                 context,
                 0,
                 intent,
-                PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.FLAG_MUTABLE)
             ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent)
                 .addOnSuccessListener {
