@@ -13,10 +13,22 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MileageService : Service() {
-    private val notification: Notification = getNotification()
+    @Inject
+    lateinit var activityTransition: ActivityTransition
+    private lateinit var notification: Notification
+
+    override fun onCreate() {
+        super.onCreate()
+        notification = getNotification()
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("-----LEE-----", "MileageService: onStartCommand")
@@ -33,7 +45,13 @@ class MileageService : Service() {
         intent?.let { mileageIntent ->
             mileageIntent.extras?.let { extras ->
                 if (extras.containsKey(TRANSITION)) {
-                    Log.d("-----LEE-----", "MileageService: ${extras.getString(TRANSITION)}")
+                    val transitionString = extras.getString(TRANSITION)
+                    transitionString?.let { transition ->
+                        Log.d("-----LEE-----", "MileageService: $transition")
+                        CoroutineScope(Dispatchers.Main).launch {
+                            activityTransition.onDetectedTransitionEvent(transition)
+                        }
+                    }
                 }
             }
         }

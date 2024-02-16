@@ -13,6 +13,8 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
 import com.google.android.gms.location.DetectedActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +22,8 @@ import javax.inject.Singleton
 class ActivityTransition @Inject constructor(
     @ApplicationContext val context: Context
 ) {
+    private val _transition = MutableStateFlow<String>("UNKNOWN")
+    val transition: StateFlow<String> = _transition
     private val pendingIntent = PendingIntent.getBroadcast(
         context,
         0,
@@ -60,6 +64,10 @@ class ActivityTransition @Inject constructor(
                     Log.e("-----LEE-----", message)
                 }
         }
+    }
+
+    suspend fun onDetectedTransitionEvent(event: String) {
+        _transition.emit(event)
     }
 
     private fun permissionGranted(): Boolean {

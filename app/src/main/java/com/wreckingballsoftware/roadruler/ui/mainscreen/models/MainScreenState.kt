@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MainScreenState(
-    val transition: String = "Still"
+    val transition: String = ""
 ) : Parcelable
