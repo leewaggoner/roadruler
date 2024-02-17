@@ -40,12 +40,12 @@ class ActivityTransition @Inject constructor(
             ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent)
                 .addOnSuccessListener {
-                    Log.d("-----LEE-----", "Activity recognition started")
+                    Log.d("--- ${ActivityTransition::class.simpleName}", "Activity recognition started")
                     onSuccess()
                 }
                 .addOnFailureListener { exception ->
                     val message = "Activity recognition could not be started: ${exception.message}"
-                    Log.d("-----LEE-----", message)
+                    Log.d("--- ${ActivityTransition::class.simpleName}", message)
                     onFailure(message)
                 }
         }
@@ -57,11 +57,11 @@ class ActivityTransition @Inject constructor(
             ActivityRecognition.getClient(context).removeActivityTransitionUpdates(pendingIntent)
                 .addOnSuccessListener {
                     pendingIntent.cancel()
-                    Log.d("-----LEE-----", "Activity recognition canceled")
+                    Log.d("--- ${ActivityTransition::class.simpleName}", "Activity recognition canceled")
                 }
                 .addOnFailureListener { exception ->
                     val message = "Activity recognition could not be canceled: ${exception.message}"
-                    Log.e("-----LEE-----", message)
+                    Log.e("--- ${ActivityTransition::class.simpleName}", message)
                 }
         }
     }

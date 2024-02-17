@@ -12,11 +12,11 @@ class OnBootReceiver : BroadcastReceiver() {
     @Inject
     lateinit var activityTransition: ActivityTransition
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("-----LEE-----", "Received broadcast: ${intent?.action ?: "null action"}")
-//        activityTransition.startTracking(
-//            onFailure = { message ->
-//                Log.d("-----LEE-----", "Failed to start activity tracking: $message")
-//            },
-//        )
+        Log.d("--- ${OnBootReceiver::class.simpleName}", "Received broadcast: ${intent?.action ?: "null action"}")
+        activityTransition.startTracking(
+            onFailure = { message ->
+                Log.d("--- ${OnBootReceiver::class.simpleName}", "Failed to start activity tracking: $message")
+            },
+        )
     }
 }

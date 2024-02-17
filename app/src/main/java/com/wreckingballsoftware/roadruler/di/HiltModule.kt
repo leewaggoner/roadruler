@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.google.android.gms.location.LocationServices
 import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.datasources.RoadRulerDatabase
@@ -27,6 +28,11 @@ private const val DB_NAME = "road_ruler_db"
 @InstallIn(SingletonComponent::class)
 @Module
 object HiltModule {
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(@ApplicationContext context: Context) =
+        LocationServices.getFusedLocationProviderClient(context)
+
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context) : DataStore<Preferences> =
