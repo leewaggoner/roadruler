@@ -24,6 +24,16 @@ fun MainScreen(
         Text(
             text = state.transition,
         )
+        if (state.driveId.isNotEmpty()) {
+            Text(
+                text = state.driveId,
+            )
+        }
+        if (state.segment.isNotEmpty()) {
+            Text(
+                text = state.segment,
+            )
+        }
     }
 }
 

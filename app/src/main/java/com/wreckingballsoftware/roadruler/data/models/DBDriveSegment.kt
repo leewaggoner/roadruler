@@ -28,6 +28,10 @@ data class DBDriveSegment(
     val userId: String,
     @ColumnInfo(name = "drive_id")
     val driveId: String,
+    @ColumnInfo(name = "latitude")
+    val latitude: String,
+    @ColumnInfo(name = "longitude")
+    val longitude: String,
     @ColumnInfo(name = "datetime_created")
     val dateTimeCreated: String,
 ) : Parcelable

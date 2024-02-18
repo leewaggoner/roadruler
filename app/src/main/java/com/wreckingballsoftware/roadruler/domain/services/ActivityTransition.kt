@@ -12,6 +12,7 @@ import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
 import com.google.android.gms.location.DetectedActivity
+import com.wreckingballsoftware.roadruler.domain.DriveInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,10 +21,12 @@ import javax.inject.Singleton
 
 @Singleton
 class ActivityTransition @Inject constructor(
-    @ApplicationContext val context: Context
+    @ApplicationContext val context: Context,
 ) {
-    private val _transition = MutableStateFlow<String>("UNKNOWN")
+    private val _transition = MutableStateFlow("UNKNOWN")
     val transition: StateFlow<String> = _transition
+    private val _driveInfo = MutableStateFlow(DriveInfo())
+    val driveInfo = _driveInfo
     private val pendingIntent = PendingIntent.getBroadcast(
         context,
         0,
@@ -68,6 +71,10 @@ class ActivityTransition @Inject constructor(
 
     suspend fun onDetectedTransitionEvent(event: String) {
         _transition.emit(event)
+    }
+
+    suspend fun onNewSegment(driveId: String, latitude: String = "", longitude: String = "") {
+        _driveInfo.emit(DriveInfo(driveId, "Lat: $latitude, Lon: $longitude"))
     }
 
     private fun permissionGranted(): Boolean {

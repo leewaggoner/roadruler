@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.wreckingballsoftware.roadruler.R
+import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
 import com.wreckingballsoftware.roadruler.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,10 @@ class MileageService : Service() {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
                 Log.d("--- ${MileageService::class.simpleName}", "Location: $location")
+                CoroutineScope(Dispatchers.Main).launch {
+                    activityTransition.onNewSegment(driveRepo.currentDriveId, location.latitude.toString(), location.longitude.toString())
+                    driveRepo.newSegment(location.latitude, location.longitude, location.time)
+                }
             }
         }
     }
@@ -44,6 +49,8 @@ class MileageService : Service() {
     lateinit var activityTransition: ActivityTransition
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    @Inject
+    lateinit var driveRepo: DriveRepo
 
     override fun onCreate() {
         super.onCreate()
@@ -92,6 +99,10 @@ class MileageService : Service() {
 
     private fun startTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Start Tracking Miles")
+        CoroutineScope(Dispatchers.Main).launch {
+            driveRepo.startTrackingDrive()
+            activityTransition.onNewSegment(driveRepo.currentDriveId)
+        }
         requestLocationUpdates()
     }
 

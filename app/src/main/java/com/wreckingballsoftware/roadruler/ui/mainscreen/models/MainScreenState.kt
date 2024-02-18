@@ -5,5 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MainScreenState(
-    val transition: String = ""
+    val transition: String = "",
+    val driveId: String = "",
+    val segment: String = "",
 ) : Parcelable
