@@ -49,8 +49,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activityTransition.stopTracking()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        activityTransition.stopTracking()
+//    }
 }

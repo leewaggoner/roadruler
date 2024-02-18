@@ -67,7 +67,6 @@ class MileageService : Service() {
                 if (extras.containsKey(START_TRACKING_MILES)) {
                     val startTrackingMiles = extras.getBoolean(START_TRACKING_MILES)
                     if (startTrackingMiles) {
-                        activityTransition.startTracking()
                         startTrackingMiles()
                     } else {
                         stopTrackingMiles()
@@ -96,11 +95,9 @@ class MileageService : Service() {
         requestLocationUpdates()
     }
 
+    @SuppressWarnings("MissingPermission")
     private fun requestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+        if (hasLocationPermission()) {
             fusedLocationProviderClient.requestLocationUpdates(
                 LocationRequest.Builder(
                     Priority.PRIORITY_HIGH_ACCURACY,
@@ -117,6 +114,11 @@ class MileageService : Service() {
             Log.e("--- ${MileageService::class.simpleName}", "Location permission not granted")
         }
     }
+
+    private fun hasLocationPermission(): Boolean =
+        (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) &&
+        (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+
     private fun stopTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Stop Tracking Miles")
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)

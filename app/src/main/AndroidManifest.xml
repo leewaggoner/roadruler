@@ -40,7 +40,8 @@
 
         <receiver
             android:name=".domain.services.ActivityTransitionReceiver"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.ACTIVITY_RECOGNITION" />
 
         <receiver
             android:name=".domain.services.OnBootReceiver"
