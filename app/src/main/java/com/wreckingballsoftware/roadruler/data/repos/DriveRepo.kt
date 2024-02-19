@@ -5,11 +5,12 @@ import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
+import com.wreckingballsoftware.roadruler.utils.asISO8601String
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,15 +22,14 @@ class DriveRepo @Inject constructor(
     private val driveSegmentsDao: DriveSegmentsDao,
     private val dataStoreWrapper: DataStoreWrapper,
 ) {
-    var currentDriveId: String = ""
-        private set
+    private var currentDriveId: String = ""
+    private lateinit var userId: String
 
-    suspend fun startTrackingDrive() {
-        val userId = dataStoreWrapper.getUserId("")
+    suspend fun startTrackingDrive() = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        userId = dataStoreWrapper.getUserId("")
         val driveId = UUID.randomUUID().toString()
         currentDriveId = driveId
-        val f = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
-        val dateTime = OffsetDateTime.now(ZoneOffset.systemDefault()).format(f)
+        val dateTime = OffsetDateTime.now(ZoneOffset.systemDefault()).asISO8601String()
         drivesDao.insertDrive(
             DBDrive(
                 driveId = driveId,
@@ -39,11 +39,14 @@ class DriveRepo @Inject constructor(
         )
     }
 
-    suspend fun newSegment(lat: Double, lon: Double, time: Long) {
-        val userId = dataStoreWrapper.getUserId("")
-        val instant = Instant.ofEpochMilli(time)
-        val f = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
-        val dateTime = OffsetDateTime.ofInstant(instant, ZoneOffset.systemDefault()).format(f)
+    suspend fun newSegment(
+        lat: Double,
+        lon: Double,
+        time: Long
+    ) = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        val dateTime = OffsetDateTime.ofInstant(
+            Instant.ofEpochMilli(time),
+            ZoneOffset.systemDefault()).asISO8601String()
         driveSegmentsDao.insertSegment(
             DBDriveSegment(
                 userId = userId,
@@ -57,9 +60,12 @@ class DriveRepo @Inject constructor(
 
     fun stopTrackingDrive() {
         //calculate the distance driven
+
+        //reset the current drive id
+        currentDriveId = ""
     }
 
-    fun getDriveSegments(driveId: String): Flow<Map<DBDrive, List<DBDriveSegment>>> {
-        return drivesDao.getDriveWithSegments(driveId)
+    fun getCurrentDriveWithSegments(): Flow<Map<DBDrive, List<DBDriveSegment>>> {
+        return drivesDao.getDriveWithSegments(currentDriveId)
     }
 }

@@ -6,11 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
+import com.wreckingballsoftware.roadruler.domain.models.DriveWithSegments
 import com.wreckingballsoftware.roadruler.domain.services.ActivityTransition
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,10 +23,22 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(
     handle: SavedStateHandle,
     activityTransition: ActivityTransition,
+    private val driveRepo: DriveRepo,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
         mutableStateOf(MainScreenState())
+    }
+    var currentDrive: Flow<DriveWithSegments> = driveRepo.getCurrentDriveWithSegments().map { element ->
+        if (element.keys.isNotEmpty()) {
+            val curDrive = element.keys.toTypedArray()[0]
+            DriveWithSegments(
+                drive = curDrive,
+                segments = element[curDrive] ?: listOf()
+            )
+        } else {
+            DriveWithSegments()
+        }
     }
 
     init {
@@ -33,12 +49,6 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             activityTransition.transition.collect { transition ->
                 eventHandler(MainScreenEvent.NewTransition(transition))
-            }
-        }
-
-        viewModelScope.launch(Dispatchers.Main) {
-            activityTransition.driveInfo.collect { driveInfo ->
-                eventHandler(MainScreenEvent.NewDriveSegment(driveInfo.driveId, driveInfo.segment))
             }
         }
     }

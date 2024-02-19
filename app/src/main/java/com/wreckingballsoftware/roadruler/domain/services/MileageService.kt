@@ -37,9 +37,8 @@ class MileageService : Service() {
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
-                Log.d("--- ${MileageService::class.simpleName}", "Location: $location")
                 CoroutineScope(Dispatchers.Main).launch {
-                    activityTransition.onNewSegment(driveRepo.currentDriveId, location.latitude.toString(), location.longitude.toString())
+                    Log.d("--- ${MileageService::class.simpleName}", "Location: $location")
                     driveRepo.newSegment(location.latitude, location.longitude, location.time)
                 }
             }
@@ -101,7 +100,6 @@ class MileageService : Service() {
         Log.d("--- ${MileageService::class.simpleName}", "Start Tracking Miles")
         CoroutineScope(Dispatchers.Main).launch {
             driveRepo.startTrackingDrive()
-            activityTransition.onNewSegment(driveRepo.currentDriveId)
         }
         requestLocationUpdates()
     }
@@ -133,6 +131,9 @@ class MileageService : Service() {
     private fun stopTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Stop Tracking Miles")
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        CoroutineScope(Dispatchers.Main).launch {
+            driveRepo.stopTrackingDrive()
+        }
     }
 
     private fun getNotification(): Notification {
