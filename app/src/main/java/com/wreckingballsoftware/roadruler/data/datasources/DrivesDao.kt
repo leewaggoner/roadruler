@@ -15,7 +15,7 @@ interface DrivesDao {
     fun getAllDrives(): Flow<List<DBDrive>>
 
     @Query("SELECT * FROM drives WHERE id=:driveId")
-    suspend fun getDrive(driveId: String): DBDrive?
+    suspend fun getDrive(driveId: Long): DBDrive?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDrive(drive: DBDrive): Long
@@ -26,6 +26,6 @@ interface DrivesDao {
     @Query("DELETE FROM drives")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM drives LEFT JOIN drive_segments ON drives.drive_id = drive_segments.drive_id WHERE drives.drive_id=:driveId")
-    fun getDriveWithSegments(driveId: String): Flow<Map<DBDrive, List<DBDriveSegment>>>
+    @Query("SELECT * FROM drives LEFT JOIN drive_segments ON drives.id = drive_segments.drive_id WHERE drives.id=:driveId")
+    fun getDriveWithSegments(driveId: Long): Flow<Map<DBDrive, List<DBDriveSegment>>>
 }

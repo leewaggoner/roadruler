@@ -137,6 +137,8 @@ class MileageService : Service() {
     }
 
     private fun getNotification(): Notification {
+        createServiceNotificationChannel()
+
         val activityPendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -146,10 +148,10 @@ class MileageService : Service() {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.notification_text))
+            .setColor(getColor(R.color.purple_200))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(activityPendingIntent)
-
-        createServiceNotificationChannel()
+            .setOngoing(true)
 
         return builder.build()
     }

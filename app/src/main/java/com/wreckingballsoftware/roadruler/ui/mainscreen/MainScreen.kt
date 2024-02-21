@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.domain.models.DriveWithSegments
 import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
 
@@ -31,10 +32,10 @@ fun MainScreen(
         Text(
             text = state.transition,
         )
-        val driveId = driveWithSegments.drive.driveId
-        if (driveId.isNotEmpty()) {
+        val driveId = driveWithSegments.drive.id
+        if (driveId != INVALID_DB_ID) {
             Text(
-                text = driveId,
+                text = "Drive: $driveId",
             )
         }
         if (driveWithSegments.segments.isNotEmpty()) {

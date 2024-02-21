@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DriveSegmentsDao {
     @Query("SELECT * FROM drive_segments WHERE drive_id=:driveId")
-    fun getDriveSegments(driveId: String): Flow<List<DBDriveSegment>>
+    fun getDriveSegments(driveId: Long): Flow<List<DBDriveSegment>>
 
 //    @Query("SELECT * FROM drive_segments WHERE id=:segmentId")
 //    suspend fun getSegment(segmentId: Long): DBDriveSegment

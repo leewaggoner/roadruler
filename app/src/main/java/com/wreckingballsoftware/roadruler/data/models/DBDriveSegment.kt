@@ -15,7 +15,7 @@ import kotlinx.parcelize.Parcelize
     foreignKeys = [
         ForeignKey(
             entity = DBDrive::class,
-            parentColumns = ["drive_id"],
+            parentColumns = ["id"],
             childColumns = ["drive_id"],
             onDelete = ForeignKey.CASCADE,
         )
@@ -24,10 +24,8 @@ import kotlinx.parcelize.Parcelize
 data class DBDriveSegment(
     @PrimaryKey(autoGenerate = true)
     val id: Long = INVALID_DB_ID,
-    @ColumnInfo(name = "user_id")
-    val userId: String,
     @ColumnInfo(name = "drive_id")
-    val driveId: String,
+    val driveId: Long,
     @ColumnInfo(name = "latitude")
     val latitude: String,
     @ColumnInfo(name = "longitude")
