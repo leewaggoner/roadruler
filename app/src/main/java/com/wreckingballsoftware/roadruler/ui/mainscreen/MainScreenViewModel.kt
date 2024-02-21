@@ -1,5 +1,7 @@
 package com.wreckingballsoftware.roadruler.ui.mainscreen
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,6 +11,8 @@ import androidx.lifecycle.viewmodel.compose.saveable
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
 import com.wreckingballsoftware.roadruler.domain.models.DriveWithSegments
 import com.wreckingballsoftware.roadruler.domain.services.ActivityTransition
+import com.wreckingballsoftware.roadruler.domain.services.MileageService
+import com.wreckingballsoftware.roadruler.domain.services.START_TRACKING_MILES
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,6 +74,22 @@ class MainScreenViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun startTrackingDrive(context: Context) {
+        viewModelScope.launch(Dispatchers.Main) {
+            val intent = Intent(context, MileageService::class.java)
+            intent.putExtra(START_TRACKING_MILES, true)
+            context.startForegroundService(intent)
+        }
+    }
+
+    fun stopTrackingDrive(context: Context) {
+        viewModelScope.launch(Dispatchers.Main) {
+            val intent = Intent(context, MileageService::class.java)
+            intent.putExtra(START_TRACKING_MILES, false)
+            context.startForegroundService(intent)
         }
     }
 }
