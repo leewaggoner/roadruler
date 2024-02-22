@@ -1,24 +1,18 @@
 package com.wreckingballsoftware.roadruler.ui.mainscreen
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
-import com.wreckingballsoftware.roadruler.domain.models.DriveWithSegments
 import com.wreckingballsoftware.roadruler.domain.services.ActivityTransition
-import com.wreckingballsoftware.roadruler.domain.services.MileageService
-import com.wreckingballsoftware.roadruler.domain.services.START_TRACKING_MILES
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,17 +27,6 @@ class MainScreenViewModel @Inject constructor(
     var state by handle.saveable {
         mutableStateOf(MainScreenState())
     }
-    var currentDrive: Flow<DriveWithSegments> = driveRepo.getCurrentDriveWithSegments().map { element ->
-        if (element.keys.isNotEmpty()) {
-            val curDrive = element.keys.toTypedArray()[0]
-            DriveWithSegments(
-                drive = curDrive,
-                segments = element[curDrive] ?: listOf()
-            )
-        } else {
-            DriveWithSegments()
-        }
-    }
 
     init {
         activityTransition.startTracking(
@@ -55,6 +38,23 @@ class MainScreenViewModel @Inject constructor(
                 eventHandler(MainScreenEvent.NewTransition(transition))
             }
         }
+
+        viewModelScope.launch(Dispatchers.Main) {
+            driveRepo.getCurrentDriveWithSegments().collect { drives ->
+                if (drives.isNotEmpty()) {
+                    val latestDriveWithSegments = drives.last()
+                    val latestDrive = latestDriveWithSegments.drive
+                    if(latestDrive.id != INVALID_DB_ID) {
+                        eventHandler(
+                            MainScreenEvent.NewDriveSegment(
+                                drive = latestDriveWithSegments.drive,
+                                segments = latestDriveWithSegments.segments.ifEmpty { listOf() }
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun eventHandler(event: MainScreenEvent) {
@@ -62,34 +62,31 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.NewTransition -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     state = state.copy(
-                        transition = event.transition
+                        transition = event.transition,
+                        driveId = "",
+                        segmentLatLon = "",
                     )
                 }
             }
             is MainScreenEvent.NewDriveSegment -> {
                 viewModelScope.launch(Dispatchers.Main) {
-                    state = state.copy(
-                        driveId = event.driveId,
-                        segment = event.segment
-                    )
+                    if (event.drive.id != INVALID_DB_ID) {
+                        state = state.copy(
+                            driveId = event.drive.id.toString(),
+                            segmentLatLon = ""
+                        )
+                    }
+                    if (event.segments.isNotEmpty()) {
+                        val lat = event.segments.lastOrNull()?.latitude ?: ""
+                        val lon = event.segments.lastOrNull()?.longitude ?: ""
+                        val latLon = "Lat: $lat, Lon: $lon"
+                        state = state.copy(
+                            driveId = event.drive.id.toString(),
+                            segmentLatLon = latLon
+                        )
+                    }
                 }
             }
-        }
-    }
-
-    fun startTrackingDrive(context: Context) {
-        viewModelScope.launch(Dispatchers.Main) {
-            val intent = Intent(context, MileageService::class.java)
-            intent.putExtra(START_TRACKING_MILES, true)
-            context.startForegroundService(intent)
-        }
-    }
-
-    fun stopTrackingDrive(context: Context) {
-        viewModelScope.launch(Dispatchers.Main) {
-            val intent = Intent(context, MileageService::class.java)
-            intent.putExtra(START_TRACKING_MILES, false)
-            context.startForegroundService(intent)
         }
     }
 }

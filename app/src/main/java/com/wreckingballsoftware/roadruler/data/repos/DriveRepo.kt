@@ -5,6 +5,7 @@ import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
+import com.wreckingballsoftware.roadruler.data.models.DBDriveWithSegments
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
 import kotlinx.coroutines.flow.Flow
@@ -61,7 +62,5 @@ class DriveRepo @Inject constructor(
         currentDriveId = INVALID_DB_ID
     }
 
-    fun getCurrentDriveWithSegments(): Flow<Map<DBDrive, List<DBDriveSegment>>> {
-        return drivesDao.getDriveWithSegments(currentDriveId)
-    }
+    fun getCurrentDriveWithSegments(): Flow<List<DBDriveWithSegments>> = drivesDao.getDriveWithSegments()
 }

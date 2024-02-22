@@ -5,16 +5,16 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Build
-import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Granularity
 import com.google.android.gms.location.LocationCallback
@@ -25,19 +25,17 @@ import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
 import com.wreckingballsoftware.roadruler.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MileageService : Service() {
+class MileageService : LifecycleService() {
     private lateinit var notification: Notification
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
-                CoroutineScope(Dispatchers.Main).launch {
+                lifecycleScope.launch {
                     Log.d("--- ${MileageService::class.simpleName}", "Location: $location")
                     driveRepo.newSegment(location.latitude, location.longitude, location.time)
                 }
@@ -57,6 +55,7 @@ class MileageService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         Log.d("--- ${MileageService::class.simpleName}", "onStartCommand")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             startForeground(
@@ -82,7 +81,7 @@ class MileageService : Service() {
                     val transitionString = extras.getString(TRANSITION)
                     transitionString?.let { transition ->
                         Log.d("--- ${MileageService::class.simpleName}", "Transition: $transition")
-                        CoroutineScope(Dispatchers.Main).launch {
+                        lifecycleScope.launch {
                             activityTransition.onDetectedTransitionEvent(transition)
                         }
                     }
@@ -92,13 +91,9 @@ class MileageService : Service() {
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
     private fun startTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Start Tracking Miles")
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             driveRepo.startTrackingDrive()
         }
         requestLocationUpdates()
@@ -131,7 +126,7 @@ class MileageService : Service() {
     private fun stopTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Stop Tracking Miles")
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             driveRepo.stopTrackingDrive()
         }
     }
