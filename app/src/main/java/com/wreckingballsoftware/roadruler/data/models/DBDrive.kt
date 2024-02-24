@@ -14,4 +14,6 @@ data class DBDrive(
     val userId: String = "",
     @ColumnInfo(name = "datetime_created")
     val dateTimeCreated: String = "",
+    @ColumnInfo(name = "total_distance")
+    val totalDistance: String = "",
 )

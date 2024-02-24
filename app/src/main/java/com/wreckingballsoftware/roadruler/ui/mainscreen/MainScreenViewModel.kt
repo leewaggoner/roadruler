@@ -55,6 +55,12 @@ class MainScreenViewModel @Inject constructor(
                 }
             }
         }
+
+        viewModelScope.launch(Dispatchers.Main) {
+            driveRepo.tripDistance.tripDistance.collect { distance ->
+                eventHandler(MainScreenEvent.NewTripDistance(distance))
+            }
+        }
     }
 
     private fun eventHandler(event: MainScreenEvent) {
@@ -86,6 +92,11 @@ class MainScreenViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+            is MainScreenEvent.NewTripDistance -> {
+                state = state.copy(
+                    tripDistance = event.distance
+                )
             }
         }
     }

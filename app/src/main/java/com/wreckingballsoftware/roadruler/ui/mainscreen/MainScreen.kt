@@ -52,9 +52,14 @@ fun MainScreenContent(
                     text = "Drive: ${state.driveId}",
                 )
             }
-            if (state.segmentLatLon.isNotEmpty()) {
+//            if (state.segmentLatLon.isNotEmpty()) {
+//                Text(
+//                    text = state.segmentLatLon,
+//                )
+//            }
+            if (state.tripDistance.isNotEmpty()) {
                 Text(
-                    text = state.segmentLatLon,
+                    text = state.tripDistance,
                 )
             }
         }
@@ -65,7 +70,12 @@ fun MainScreenContent(
 @Composable
 fun MainScreenPreview() {
     MainScreenContent(
-        state = MainScreenState(),
+        state = MainScreenState(
+            transition = "Transition",
+            driveId = "Drive ID",
+            segmentLatLon = "Segment Lat Lon",
+            tripDistance = "Trip Distance",
+        ),
     )
 }
 

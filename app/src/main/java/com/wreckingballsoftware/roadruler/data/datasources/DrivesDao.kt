@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveWithSegments
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 interface DrivesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDrive(drive: DBDrive): Long
+
+    @Upsert
+    suspend fun updateDrive(drive: DBDrive): Long
 
     @Transaction
     @Query("SELECT * FROM drives")

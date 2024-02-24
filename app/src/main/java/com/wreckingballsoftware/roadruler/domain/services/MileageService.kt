@@ -37,7 +37,7 @@ class MileageService : LifecycleService() {
             for (location in locationResult.locations) {
                 lifecycleScope.launch {
                     Log.d("--- ${MileageService::class.simpleName}", "Location: $location")
-                    driveRepo.newSegment(location.latitude, location.longitude, location.time)
+                    driveRepo.newSegment(location)
                 }
             }
         }
