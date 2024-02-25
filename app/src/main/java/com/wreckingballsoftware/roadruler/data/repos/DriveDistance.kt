@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.roadruler.domain
+package com.wreckingballsoftware.roadruler.data.repos
 
 import android.location.Location
 import com.wreckingballsoftware.roadruler.utils.metersToKilometers
@@ -13,8 +13,8 @@ import javax.inject.Singleton
 class DriveDistance @Inject constructor() {
     private var previousLocation: Location? = null
     private var driveDistanceInMeters: Float = 0f
-    private val _distance = MutableStateFlow("")
-    val distance: StateFlow<String> = _distance
+    private val _currentDistance = MutableStateFlow("")
+    val currentDistance: StateFlow<String> = _currentDistance
     var distanceDisplayType = DistanceType.MILES
 
     fun calculateCurrentDistance(location: Location) {
@@ -22,29 +22,27 @@ class DriveDistance @Inject constructor() {
             driveDistanceInMeters += prevLocation.distanceTo(location)
         }
         previousLocation = location
-        when (distanceDisplayType) {
-            DistanceType.MILES -> emitDriveDistanceInMiles()
-            DistanceType.KILOMETERS -> emitDriveDistanceInKilometers()
-        }
+        emitDriveDistance(calculateDistanceForType(driveDistanceInMeters))
     }
 
     fun endOfDrive() : Float {
         val totalDistance = driveDistanceInMeters
-        _distance.value = ""
+        _currentDistance.value = ""
         previousLocation = null
         driveDistanceInMeters = 0f
         return totalDistance
     }
 
-    private fun emitDriveDistanceInKilometers() {
-        _distance.value = driveDistanceInMeters.metersToKilometers().toPrecisionString(2)
+    fun calculateDistanceForType(distance: Float): String {
+        return when (distanceDisplayType) {
+            DistanceType.MILES -> distance.metersToMiles().toPrecisionString(1)
+            DistanceType.KILOMETERS -> distance.metersToKilometers().toPrecisionString(1)
+        }
     }
 
-    private fun emitDriveDistanceInMiles() {
-        val miles = driveDistanceInMeters.metersToMiles().toPrecisionString(2)
-        _distance.value = miles
+    private fun emitDriveDistance(distance: String) {
+        _currentDistance.value = distance
     }
-
     companion object {
         enum class DistanceType {
             MILES,

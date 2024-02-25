@@ -6,11 +6,9 @@ import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
-import com.wreckingballsoftware.roadruler.data.models.DBDriveWithSegments
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
-import com.wreckingballsoftware.roadruler.domain.DriveDistance
+import com.wreckingballsoftware.roadruler.domain.models.FinalDriveInfo
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -28,6 +26,16 @@ class DriveRepo @Inject constructor(
 ) {
     private var currentDriveId: Long = INVALID_DB_ID
     private lateinit var userId: String
+    private var driveFinishedCallback: (FinalDriveInfo) -> Unit = {}
+    private var driveStartedCallback: (String) -> Unit = {}
+
+    fun setDriveStartedCallback(onDriveStarted: (String) -> Unit) {
+        driveStartedCallback = onDriveStarted
+    }
+
+    fun setDriveFinishedCallback(onDriveOver: (FinalDriveInfo) -> Unit) {
+        driveFinishedCallback = onDriveOver
+    }
 
     suspend fun startTrackingDrive() = withContext(kotlinx.coroutines.Dispatchers.IO) {
         userId = dataStoreWrapper.getUserId("")
@@ -38,6 +46,7 @@ class DriveRepo @Inject constructor(
                 dateTimeCreated = dateTime,
             )
         )
+        driveStartedCallback("Drive $currentDriveId")
     }
 
     suspend fun newSegment(location: Location) = withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -66,9 +75,14 @@ class DriveRepo @Inject constructor(
             )
         )
 
+        driveFinishedCallback(
+            FinalDriveInfo(
+                driveName = "Drive $currentDriveId",
+                driveDistance = driveDistance.calculateDistanceForType(distanceInMeters)
+            )
+        )
+
         //reset the current drive id
         currentDriveId = INVALID_DB_ID
     }
-
-    fun getCurrentDriveWithSegments(): Flow<List<DBDriveWithSegments>> = drivesDao.getDriveWithSegments()
 }

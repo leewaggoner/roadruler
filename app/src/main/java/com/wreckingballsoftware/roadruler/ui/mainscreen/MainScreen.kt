@@ -47,19 +47,19 @@ fun MainScreenContent(
             Text(
                 text = state.transition,
             )
-            if (state.driveId.isNotEmpty()) {
+            if (state.driveName.isNotEmpty()) {
                 Text(
-                    text = "Drive: ${state.driveId}",
+                    text = "Drive: ${state.driveName}",
                 )
             }
-//            if (state.segmentLatLon.isNotEmpty()) {
-//                Text(
-//                    text = state.segmentLatLon,
-//                )
-//            }
-            if (state.driveDistance.isNotEmpty()) {
+            if (state.finalDistance.isNotEmpty()) {
                 Text(
-                    text = state.driveDistance,
+                    text = state.finalDistance,
+                )
+            }
+            if (state.currentDistance.isNotEmpty()) {
+                Text(
+                    text = state.currentDistance,
                 )
             }
         }
@@ -72,9 +72,8 @@ fun MainScreenPreview() {
     MainScreenContent(
         state = MainScreenState(
             transition = "Transition",
-            driveId = "Drive ID",
-            segmentLatLon = "Segment Lat Lon",
-            driveDistance = "Trip Distance",
+            driveName = "Drive ID",
+            currentDistance = "Trip Distance",
         ),
     )
 }

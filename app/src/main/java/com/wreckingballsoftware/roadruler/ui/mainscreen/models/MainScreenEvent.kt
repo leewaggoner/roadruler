@@ -1,10 +1,10 @@
 package com.wreckingballsoftware.roadruler.ui.mainscreen.models
 
-import com.wreckingballsoftware.roadruler.data.models.DBDrive
-import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
+import com.wreckingballsoftware.roadruler.domain.models.FinalDriveInfo
 
 interface MainScreenEvent {
     data class NewTransition(val transition: String) : MainScreenEvent
-    data class NewDriveSegment(val drive: DBDrive, val segments: List<DBDriveSegment>) : MainScreenEvent
+    data class NewDriveStarted(val driveName: String) : MainScreenEvent
     data class NewDriveDistance(val distance: String) : MainScreenEvent
+    data class FinalDriveDistance(val driveInfo: FinalDriveInfo) : MainScreenEvent
 }

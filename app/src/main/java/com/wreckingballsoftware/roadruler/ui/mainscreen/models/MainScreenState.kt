@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MainScreenState(
     val transition: String = "",
-    val driveId: String = "",
-    val segmentLatLon: String = "",
-    val driveDistance: String = "",
+    val driveName: String = "",
+    val currentDistance: String = "",
+    val finalDistance: String = "",
 ) : Parcelable
