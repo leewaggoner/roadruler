@@ -8,5 +8,5 @@ data class MainScreenState(
     val transition: String = "",
     val driveId: String = "",
     val segmentLatLon: String = "",
-    val tripDistance: String = "",
+    val driveDistance: String = "",
 ) : Parcelable

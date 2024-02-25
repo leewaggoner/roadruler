@@ -8,7 +8,7 @@ import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
 import com.wreckingballsoftware.roadruler.data.models.DBDriveWithSegments
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
-import com.wreckingballsoftware.roadruler.domain.TripDistance
+import com.wreckingballsoftware.roadruler.domain.DriveDistance
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -24,7 +24,7 @@ class DriveRepo @Inject constructor(
     private val drivesDao: DrivesDao,
     private val driveSegmentsDao: DriveSegmentsDao,
     private val dataStoreWrapper: DataStoreWrapper,
-    val tripDistance: TripDistance,
+    val driveDistance: DriveDistance,
 ) {
     private var currentDriveId: Long = INVALID_DB_ID
     private lateinit var userId: String
@@ -41,7 +41,7 @@ class DriveRepo @Inject constructor(
     }
 
     suspend fun newSegment(location: Location) = withContext(kotlinx.coroutines.Dispatchers.IO) {
-        tripDistance.calculateCurrentDistance(location)
+        driveDistance.calculateCurrentDistance(location)
         val dateTime = OffsetDateTime.ofInstant(
             Instant.ofEpochMilli(location.time),
             ZoneOffset.systemDefault()).asISO8601String()
@@ -57,7 +57,7 @@ class DriveRepo @Inject constructor(
 
     suspend fun stopTrackingDrive() {
         //calculate the distance driven
-        val distanceInMeters = tripDistance.endOfTrip()
+        val distanceInMeters = driveDistance.endOfDrive()
 
         drivesDao.updateDrive(
             DBDrive(

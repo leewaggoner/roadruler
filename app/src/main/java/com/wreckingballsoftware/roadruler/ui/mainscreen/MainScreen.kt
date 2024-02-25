@@ -57,9 +57,9 @@ fun MainScreenContent(
 //                    text = state.segmentLatLon,
 //                )
 //            }
-            if (state.tripDistance.isNotEmpty()) {
+            if (state.driveDistance.isNotEmpty()) {
                 Text(
-                    text = state.tripDistance,
+                    text = state.driveDistance,
                 )
             }
         }
@@ -74,7 +74,7 @@ fun MainScreenPreview() {
             transition = "Transition",
             driveId = "Drive ID",
             segmentLatLon = "Segment Lat Lon",
-            tripDistance = "Trip Distance",
+            driveDistance = "Trip Distance",
         ),
     )
 }
