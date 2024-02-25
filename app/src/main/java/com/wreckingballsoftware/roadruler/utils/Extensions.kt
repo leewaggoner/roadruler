@@ -1,20 +1,19 @@
 package com.wreckingballsoftware.roadruler.utils
 
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-private const val MILES_CONVERSION = 0.0006213712f
-//private val MILES_CONVERSION = 0.000621371192237.toBigDecimal()
-private const val KILOMETERS_CONVERSION = 0.001f
-//private val KILOMETERS_CONVERSION = 0.001.toBigDecimal()
+private val MILES_CONVERSION = "0.000621371192237".toBigDecimal()
+private val KILOMETERS_CONVERSION = "0.001".toBigDecimal()
+private const val SCALE = 1
 
 fun OffsetDateTime.asISO8601String(): String {
     val f = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxx")
     return this.format(f)
 }
 
-fun Float.metersToMiles() = this * MILES_CONVERSION
+fun BigDecimal.metersToMiles() = (this * MILES_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)
 
-fun Float.metersToKilometers() = this * KILOMETERS_CONVERSION
-
-fun Float.toPrecisionString(precision: Int) = String.format("%.${precision}f", this)
+fun BigDecimal.metersToKilometers() = (this * KILOMETERS_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)

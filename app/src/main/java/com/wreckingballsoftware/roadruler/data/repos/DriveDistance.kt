@@ -3,7 +3,6 @@ package com.wreckingballsoftware.roadruler.data.repos
 import android.location.Location
 import com.wreckingballsoftware.roadruler.utils.metersToKilometers
 import com.wreckingballsoftware.roadruler.utils.metersToMiles
-import com.wreckingballsoftware.roadruler.utils.toPrecisionString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -34,9 +33,10 @@ class DriveDistance @Inject constructor() {
     }
 
     fun calculateDistanceForType(distance: Float): String {
+        val bdDistance = distance.toBigDecimal()
         return when (distanceDisplayType) {
-            DistanceType.MILES -> distance.metersToMiles().toPrecisionString(1)
-            DistanceType.KILOMETERS -> distance.metersToKilometers().toPrecisionString(1)
+            DistanceType.MILES -> bdDistance.metersToMiles().toString()
+            DistanceType.KILOMETERS -> bdDistance.metersToKilometers().toString()
         }
     }
 
