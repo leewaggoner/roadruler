@@ -4,8 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.Update
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
+import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 
 @Dao
 interface DrivesDao {
@@ -15,6 +16,6 @@ interface DrivesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDrive(drive: DBDrive): Long
 
-    @Upsert
-    suspend fun updateDrive(drive: DBDrive): Long
+    @Update(entity = DBDrive::class)
+    suspend fun updateTotalDistance(distance: DBTotalDistance)
 }

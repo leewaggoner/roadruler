@@ -6,6 +6,7 @@ import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
+import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.domain.models.FinalDriveInfo
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
@@ -68,8 +69,8 @@ class DriveRepo @Inject constructor(
         //calculate the distance driven
         val distanceInMeters = driveDistance.endOfDrive()
 
-        drivesDao.updateDrive(
-            DBDrive(
+        drivesDao.updateTotalDistance(
+            DBTotalDistance(
                 id = currentDriveId,
                 totalDistance = distanceInMeters.toString()
             )
