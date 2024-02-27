@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
-import com.wreckingballsoftware.roadruler.domain.services.ActivityTransition
+import com.wreckingballsoftware.roadruler.data.services.ActivityTransition
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel

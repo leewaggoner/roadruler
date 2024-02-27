@@ -3,8 +3,10 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="grant_permissions_title">Grant Permission</string>
-    <string name="need_permission">Please grant the necessary permissions to use Road Ruler</string>
-    <string name="permission_rationale">Road Ruler needs these permissions to track your driving miles.</string>
+    <string name="location_permission">Please grant the following permissions to use Road Ruler.</string>
+    <string name="location_rationale">Road Ruler requires these permissions to track your driving miles.</string>
+    <string name="background_rationale">Please select \'Allow all the time\' on the following permission screen to use Road Ruler.\n\nRoad Ruler will NOT WORK without this permission.</string>
+    <string name="background_permission">Selecting \'Allow all the time\' allows Road Ruler to track your driving miles in the background while you use your other apps, or even if you close the Road Ruler app. Road Ruler will NOT WORK without this permission.\n\nPlease go to the app settings for Road Ruler and select \'Allow all the time\' from the Permissions->Location screen</string>
     <string name="error">Error</string>
     <string name="must_allow_activity_recognition_permission">You must grant the physical activity permission for Road Ruler to operate correctly.</string>
     <string name="notification_action_text">Launch Road Ruler.</string>

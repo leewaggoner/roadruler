@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.compose.CheckPermissions
 import com.wreckingballsoftware.roadruler.ui.mainscreen.MainScreen
 
@@ -29,8 +30,20 @@ fun RoadRulerHost() {
         composable(route = Destinations.MainScreen) {
             CheckPermissions(
                 permissions = startupPermissions,
+                permissionId = R.string.location_permission,
+                rationaleId = R.string.location_rationale,
             ) {
-                MainScreen(navGraph = navGraph)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    CheckPermissions(
+                        permissions = listOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                        permissionId = R.string.background_permission,
+                        rationaleId = R.string.background_rationale,
+                    ) {
+                        MainScreen(navGraph = navGraph)
+                    }
+                } else {
+                    MainScreen(navGraph = navGraph)
+                }
             }
         }
     }

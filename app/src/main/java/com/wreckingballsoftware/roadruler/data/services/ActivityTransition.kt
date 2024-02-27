@@ -1,4 +1,4 @@
-package com.wreckingballsoftware.roadruler.domain.services
+package com.wreckingballsoftware.roadruler.data.services
 
 import android.Manifest
 import android.app.PendingIntent
