@@ -40,7 +40,7 @@
         </service>
 
         <receiver
-            android:name=".data.services.ActivityTransitionReceiver"
+            android:name=".data.services.ActionTransitionReceiver"
             android:exported="true"
             android:permission="android.permission.ACTIVITY_RECOGNITION" />
 
@@ -52,5 +52,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

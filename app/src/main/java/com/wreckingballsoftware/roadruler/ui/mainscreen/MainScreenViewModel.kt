@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
-import com.wreckingballsoftware.roadruler.data.services.ActivityTransition
+import com.wreckingballsoftware.roadruler.data.services.ActionTransition
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     handle: SavedStateHandle,
-    activityTransition: ActivityTransition,
+    actionTransition: ActionTransition,
     private val driveRepo: DriveRepo,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
@@ -28,7 +28,7 @@ class MainScreenViewModel @Inject constructor(
     }
 
     init {
-        activityTransition.startTracking(
+        actionTransition.startTracking(
             onFailure = { },
         )
 
@@ -41,7 +41,7 @@ class MainScreenViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.Main) {
-            activityTransition.transition.collect { transition ->
+            actionTransition.transition.collect { transition ->
                 eventHandler(MainScreenEvent.NewTransition(transition))
             }
         }

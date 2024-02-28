@@ -43,7 +43,7 @@ class MileageService : LifecycleService() {
         }
     }
     @Inject
-    lateinit var activityTransition: ActivityTransition
+    lateinit var actionTransition: ActionTransition
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     @Inject
@@ -82,7 +82,7 @@ class MileageService : LifecycleService() {
                     transitionString?.let { transition ->
                         Log.d("--- ${MileageService::class.simpleName}", "Transition: $transition")
                         lifecycleScope.launch {
-                            activityTransition.onDetectedTransitionEvent(transition)
+                            actionTransition.onDetectedTransitionEvent(transition)
                         }
                     }
                 }

@@ -10,10 +10,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OnBootReceiver : BroadcastReceiver() {
     @Inject
-    lateinit var activityTransition: ActivityTransition
+    lateinit var actionTransition: ActionTransition
+
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("--- ${OnBootReceiver::class.simpleName}", "Received broadcast: ${intent?.action ?: "null action"}")
-        activityTransition.startTracking(
+        actionTransition.startTracking(
             onFailure = { message ->
                 Log.d("--- ${OnBootReceiver::class.simpleName}", "Failed to start activity tracking: $message")
             },

@@ -12,9 +12,9 @@ import com.google.android.gms.location.DetectedActivity
 const val TRANSITION = "transition"
 const val START_TRACKING_MILES = "start_tracking_miles"
 
-class ActivityTransitionReceiver : BroadcastReceiver() {
+class ActionTransitionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("--- ${ActivityTransitionReceiver::class.simpleName}", "onReceive")
+        Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "onReceive")
         intent?.let { arIntent ->
             if (ActivityTransitionResult.hasResult(intent)) {
                 val result = ActivityTransitionResult.extractResult(arIntent)
@@ -30,7 +30,7 @@ class ActivityTransitionReceiver : BroadcastReceiver() {
         for (event in transitionEvents) {
             val transition = "${mapTransitionToString(event)} ${mapActivityToString(event)}"
             val intent = Intent(context, MileageService::class.java)
-            Log.d("--- ${ActivityTransitionReceiver::class.simpleName}", "Transition: $transition")
+            Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "Transition: $transition")
             if (event.activityType == DetectedActivity.IN_VEHICLE) {
                 when (event.transitionType) {
                     ActivityTransition.ACTIVITY_TRANSITION_ENTER -> {

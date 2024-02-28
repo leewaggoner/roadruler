@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ActivityTransition @Inject constructor(
+class ActionTransition @Inject constructor(
     @ApplicationContext val context: Context,
 ) {
     private val _transition = MutableStateFlow("UNKNOWN")
@@ -27,7 +27,7 @@ class ActivityTransition @Inject constructor(
     private val pendingIntent = PendingIntent.getBroadcast(
         context,
         0,
-        Intent(context, ActivityTransitionReceiver::class.java),
+        Intent(context, ActionTransitionReceiver::class.java),
         PendingIntent.FLAG_MUTABLE)
 
     @SuppressWarnings("MissingPermission")
