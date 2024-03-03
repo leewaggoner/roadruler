@@ -9,15 +9,14 @@ import com.google.android.gms.location.ActivityTransitionEvent
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 
-const val TRANSITION = "transition"
 const val START_TRACKING_MILES = "start_tracking_miles"
 
 class ActionTransitionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "onReceive")
-        intent?.let { arIntent ->
+        intent?.let { atIntent ->
             if (ActivityTransitionResult.hasResult(intent)) {
-                val result = ActivityTransitionResult.extractResult(arIntent)
+                val result = ActivityTransitionResult.extractResult(atIntent)
                 if (result != null && context != null) {
                     processTransitionResults(context, result.transitionEvents)
                 }
@@ -29,8 +28,9 @@ class ActionTransitionReceiver : BroadcastReceiver() {
         //if driving, start location service
         for (event in transitionEvents) {
             val transition = "${mapTransitionToString(event)} ${mapActivityToString(event)}"
-            val intent = Intent(context, MileageService::class.java)
             Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "Transition: $transition")
+
+            val intent = Intent(context, MileageService::class.java)
             if (event.activityType == DetectedActivity.IN_VEHICLE) {
                 when (event.transitionType) {
                     ActivityTransition.ACTIVITY_TRANSITION_ENTER -> {
@@ -40,9 +40,8 @@ class ActionTransitionReceiver : BroadcastReceiver() {
                         intent.putExtra(START_TRACKING_MILES, false)
                     }
                 }
+                context.startForegroundService(intent)
             }
-            intent.putExtra(TRANSITION, transition)
-            context.startForegroundService(intent)
         }
     }
 

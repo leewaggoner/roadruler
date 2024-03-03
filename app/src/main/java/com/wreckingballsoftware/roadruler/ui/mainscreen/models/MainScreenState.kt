@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MainScreenState(
-    val transition: String = "",
+    val transition: String = "No Op",
     val driveName: String = "",
     val currentDistance: String = "",
     val finalDistance: String = "",

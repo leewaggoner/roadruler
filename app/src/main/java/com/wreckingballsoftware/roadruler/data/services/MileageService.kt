@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
@@ -13,6 +12,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -23,7 +23,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
-import com.wreckingballsoftware.roadruler.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -31,7 +30,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MileageService : LifecycleService() {
-    private lateinit var notification: Notification
+    private var isTrackingMiles = false
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
@@ -43,46 +42,36 @@ class MileageService : LifecycleService() {
         }
     }
     @Inject
-    lateinit var actionTransition: ActionTransition
-    @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     @Inject
     lateinit var driveRepo: DriveRepo
 
-    override fun onCreate() {
-        super.onCreate()
-        notification = getNotification()
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.d("--- ${MileageService::class.simpleName}", "onStartCommand")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            startForeground(
-                NOTIFICATION_ID,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION,
-            )
-        } else {
-            startForeground(NOTIFICATION_ID, notification)
-        }
-
         intent?.let { mileageIntent ->
             mileageIntent.extras?.let { extras ->
                 if (extras.containsKey(START_TRACKING_MILES)) {
                     val startTrackingMiles = extras.getBoolean(START_TRACKING_MILES)
                     if (startTrackingMiles) {
-                        startTrackingMiles()
+                        if (!isTrackingMiles) {
+                            startTrackingMiles()
+                            isTrackingMiles = true
+                        } else {
+                            Log.d(
+                                "--- ${MileageService::class.simpleName}",
+                                "startTrackingMiles received, but already tracking miles"
+                            )
+                        }
                     } else {
-                        stopTrackingMiles()
-                    }
-                }
-                if (extras.containsKey(TRANSITION)) {
-                    val transitionString = extras.getString(TRANSITION)
-                    transitionString?.let { transition ->
-                        Log.d("--- ${MileageService::class.simpleName}", "Transition: $transition")
-                        lifecycleScope.launch {
-                            actionTransition.onDetectedTransitionEvent(transition)
+                        if (isTrackingMiles) {
+                            stopTrackingMiles()
+                            isTrackingMiles = false
+                        } else {
+                            Log.d(
+                                "--- ${MileageService::class.simpleName}",
+                                "stopTrackinnMiles received, but not tracking miles"
+                            )
                         }
                     }
                 }
@@ -93,6 +82,17 @@ class MileageService : LifecycleService() {
 
     private fun startTrackingMiles() {
         Log.d("--- ${MileageService::class.simpleName}", "Start Tracking Miles")
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            getNotification(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            } else {
+                0
+            }
+        )
+
         lifecycleScope.launch {
             driveRepo.startTrackingDrive()
         }
@@ -129,23 +129,18 @@ class MileageService : LifecycleService() {
         lifecycleScope.launch {
             driveRepo.stopTrackingDrive()
         }
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun getNotification(): Notification {
         createServiceNotificationChannel()
 
-        val activityPendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            Intent( this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE
-        )
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.notification_text))
             .setColor(getColor(R.color.purple_200))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentIntent(activityPendingIntent)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
 
         return builder.build()
