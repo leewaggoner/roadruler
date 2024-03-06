@@ -15,9 +15,8 @@ class OnBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("--- ${OnBootReceiver::class.simpleName}", "Received broadcast: ${intent?.action ?: "null action"}")
         actionTransition.startTracking(
-            onFailure = { message ->
-                Log.d("--- ${OnBootReceiver::class.simpleName}", "Failed to start activity tracking: $message")
-            },
+            onSuccess = { },
+            onFailure = { },
         )
     }
 }

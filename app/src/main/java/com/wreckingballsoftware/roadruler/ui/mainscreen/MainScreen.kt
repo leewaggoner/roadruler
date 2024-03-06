@@ -49,7 +49,7 @@ fun MainScreenContent(
             )
             if (state.driveName.isNotEmpty()) {
                 Text(
-                    text = "Drive: ${state.driveName}",
+                    text = state.driveName,
                 )
             }
             if (state.finalDistance.isNotEmpty()) {

@@ -29,6 +29,7 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         actionTransition.startTracking(
+            onSuccess = { },
             onFailure = { },
         )
 

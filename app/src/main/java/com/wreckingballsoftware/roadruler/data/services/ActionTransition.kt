@@ -27,45 +27,56 @@ class ActionTransition @Inject constructor(
 ) {
     private val _transition = MutableStateFlow("UNKNOWN")
     val transition: StateFlow<String> = _transition
-    private val pendingIntent = PendingIntent.getBroadcast(
-        context,
-        0,
-        Intent(context, ActionTransitionReceiver::class.java),
-        PendingIntent.FLAG_MUTABLE)
+    private var pendingIntent: PendingIntent? = null
 
     @SuppressWarnings("MissingPermission")
     fun startTracking(
         onSuccess: () -> Unit = { },
         onFailure: (String) -> Unit = { }
     ) {
+        pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, ActionTransitionReceiver::class.java),
+            PendingIntent.FLAG_MUTABLE)
+
         val request = ActivityTransitionRequest(getTransitions())
+
         if (permissionGranted()) {
-            ActivityRecognition.getClient(context)
-                .requestActivityTransitionUpdates(request, pendingIntent)
-                .addOnSuccessListener {
-                    Log.d("--- ${ActivityTransition::class.simpleName}", "Activity recognition started")
-                    onSuccess()
-                }
-                .addOnFailureListener { exception ->
-                    val message = "Activity recognition could not be started: ${exception.message}"
-                    Log.d("--- ${ActivityTransition::class.simpleName}", message)
-                    onFailure(message)
-                }
+            pendingIntent?.let { trackingIntent ->
+                ActivityRecognition.getClient(context)
+                    .requestActivityTransitionUpdates(request, trackingIntent)
+                    .addOnSuccessListener {
+                        Log.d(
+                            "--- ${ActivityTransition::class.simpleName}",
+                            "Activity recognition started"
+                        )
+                        onSuccess()
+                    }
+                    .addOnFailureListener { exception ->
+                        val message =
+                            "Activity recognition could not be started: ${exception.message}"
+                        Log.d("--- ${ActionTransition::class.simpleName}", message)
+                        onFailure(message)
+                    }
+            }
         }
     }
 
     @SuppressWarnings("MissingPermission")
     fun stopTracking() {
         if (permissionGranted()) {
-            ActivityRecognition.getClient(context).removeActivityTransitionUpdates(pendingIntent)
-                .addOnSuccessListener {
-                    pendingIntent.cancel()
-                    Log.d("--- ${ActivityTransition::class.simpleName}", "Activity recognition canceled")
-                }
-                .addOnFailureListener { exception ->
-                    val message = "Activity recognition could not be canceled: ${exception.message}"
-                    Log.e("--- ${ActivityTransition::class.simpleName}", message)
-                }
+            pendingIntent?.let { trackingIntent ->
+                ActivityRecognition.getClient(context).removeActivityTransitionUpdates(trackingIntent)
+                    .addOnSuccessListener {
+                        trackingIntent.cancel()
+                        Log.d("--- ${ActivityTransition::class.simpleName}", "Activity recognition canceled")
+                    }
+                    .addOnFailureListener { exception ->
+                        val message = "Activity recognition could not be canceled: ${exception.message}"
+                        Log.e("--- ${ActivityTransition::class.simpleName}", message)
+                    }
+            }
         }
     }
 

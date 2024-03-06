@@ -79,7 +79,7 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.50")
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
 
