@@ -14,6 +14,8 @@ fun OffsetDateTime.asISO8601String(): String {
     return this.format(f)
 }
 
-fun BigDecimal.metersToMiles() = (this * MILES_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)
+fun BigDecimal.metersToMiles(): BigDecimal =
+    (this * MILES_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)
 
-fun BigDecimal.metersToKilometers() = (this * KILOMETERS_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)
+fun BigDecimal.metersToKilometers(): BigDecimal =
+    (this * KILOMETERS_CONVERSION).setScale(SCALE, RoundingMode.HALF_UP)

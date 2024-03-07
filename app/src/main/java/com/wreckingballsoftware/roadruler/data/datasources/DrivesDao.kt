@@ -17,5 +17,5 @@ interface DrivesDao {
     suspend fun insertDrive(drive: DBDrive): Long
 
     @Update(entity = DBDrive::class)
-    suspend fun updateTotalDistance(distance: DBTotalDistance)
+    suspend fun updateTotalDistanceField(distance: DBTotalDistance)
 }

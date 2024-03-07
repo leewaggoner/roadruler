@@ -38,7 +38,7 @@ class DriveRepo @Inject constructor(
         driveFinishedCallback = onDriveOver
     }
 
-    suspend fun startTrackingDrive() = withContext(kotlinx.coroutines.Dispatchers.IO) {
+    suspend fun startTrackingDrive(location: Location?) = withContext(kotlinx.coroutines.Dispatchers.IO) {
         userId = dataStoreWrapper.getUserId("")
         val dateTime = OffsetDateTime.now(ZoneOffset.systemDefault()).asISO8601String()
         currentDriveId = drivesDao.insertDrive(
@@ -47,6 +47,9 @@ class DriveRepo @Inject constructor(
                 dateTimeCreated = dateTime,
             )
         )
+        location?.let { loc ->
+            newSegment(loc)
+        }
         driveStartedCallback("Drive $currentDriveId")
     }
 
@@ -69,7 +72,7 @@ class DriveRepo @Inject constructor(
         //calculate the distance driven
         val distanceInMeters = driveDistance.endOfDrive()
 
-        drivesDao.updateTotalDistance(
+        drivesDao.updateTotalDistanceField(
             DBTotalDistance(
                 id = currentDriveId,
                 totalDistance = distanceInMeters.toString()

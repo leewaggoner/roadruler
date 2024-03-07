@@ -54,7 +54,7 @@ fun MainScreenContent(
             }
             if (state.finalDistance.isNotEmpty()) {
                 Text(
-                    text = state.finalDistance,
+                    text = "Final: ${state.finalDistance}",
                 )
             }
             if (state.currentDistance.isNotEmpty()) {

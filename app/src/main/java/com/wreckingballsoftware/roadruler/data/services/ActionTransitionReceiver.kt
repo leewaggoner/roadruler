@@ -8,10 +8,15 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionEvent
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 const val START_TRACKING_MILES = "start_tracking_miles"
 
+@AndroidEntryPoint
 class ActionTransitionReceiver : BroadcastReceiver() {
+    @Inject
+    lateinit var actionTransition: ActionTransition
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "onReceive")
         intent?.let { atIntent ->
@@ -29,9 +34,10 @@ class ActionTransitionReceiver : BroadcastReceiver() {
         for (event in transitionEvents) {
             val transition = "${mapTransitionToString(event)} ${mapActivityToString(event)}"
             Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "Transition: $transition")
+            actionTransition.onDetectedTransitionEvent(transition)
 
-            val intent = Intent(context, MileageService::class.java)
             if (event.activityType == DetectedActivity.IN_VEHICLE) {
+                val intent = Intent(context, MileageService::class.java)
                 when (event.transitionType) {
                     ActivityTransition.ACTIVITY_TRANSITION_ENTER -> {
                         intent.putExtra(START_TRACKING_MILES, true)

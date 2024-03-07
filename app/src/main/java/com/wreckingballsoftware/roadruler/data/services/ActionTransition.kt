@@ -13,11 +13,8 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
 import com.google.android.gms.location.DetectedActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -81,9 +78,7 @@ class ActionTransition @Inject constructor(
     }
 
     fun onDetectedTransitionEvent(event: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            _transition.emit(event)
-        }
+        _transition.value = event
     }
 
     private fun permissionGranted(): Boolean {

@@ -57,23 +57,13 @@ class MainScreenViewModel @Inject constructor(
     private fun eventHandler(event: MainScreenEvent) {
         when (event) {
             is MainScreenEvent.NewTransition -> {
-                viewModelScope.launch(Dispatchers.Main) {
-                    state = state.copy(
-                        transition = event.transition,
-                    )
-                }
+                state = state.copy(transition = event.transition)
             }
             is MainScreenEvent.NewDriveStarted -> {
-                viewModelScope.launch(Dispatchers.Main) {
-                    state = state.copy(
-                        driveName = event.driveName,
-                    )
-                }
+                state = state.copy(driveName = event.driveName)
             }
             is MainScreenEvent.NewDriveDistance -> {
-                state = state.copy(
-                    currentDistance = event.distance
-                )
+                state = state.copy(currentDistance = event.distance)
             }
             is MainScreenEvent.FinalDriveDistance -> {
                 state = state.copy(

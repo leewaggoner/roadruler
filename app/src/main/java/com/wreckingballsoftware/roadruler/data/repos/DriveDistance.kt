@@ -43,6 +43,7 @@ class DriveDistance @Inject constructor() {
     private fun emitDriveDistance(distance: String) {
         _currentDistance.value = distance
     }
+
     companion object {
         enum class DistanceType {
             MILES,
