@@ -8,7 +8,6 @@ import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
 import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
-import com.wreckingballsoftware.roadruler.domain.models.FinalDriveInfo
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -27,14 +26,14 @@ class DriveRepo @Inject constructor(
 ) {
     private var currentDriveId: Long = INVALID_DB_ID
     private lateinit var userId: String
-    private var driveFinishedCallback: (FinalDriveInfo) -> Unit = {}
-    private var driveStartedCallback: (String) -> Unit = {}
+    private var driveFinishedCallback: (String) -> Unit = {}
+    private var driveStartedCallback: (Long) -> Unit = {}
 
-    fun setDriveStartedCallback(onDriveStarted: (String) -> Unit) {
+    fun setDriveStartedCallback(onDriveStarted: (Long) -> Unit) {
         driveStartedCallback = onDriveStarted
     }
 
-    fun setDriveFinishedCallback(onDriveOver: (FinalDriveInfo) -> Unit) {
+    fun setDriveFinishedCallback(onDriveOver: (String) -> Unit) {
         driveFinishedCallback = onDriveOver
     }
 
@@ -50,7 +49,7 @@ class DriveRepo @Inject constructor(
         location?.let { loc ->
             newSegment(loc)
         }
-        driveStartedCallback("Drive $currentDriveId")
+        driveStartedCallback(currentDriveId)
     }
 
     suspend fun newSegment(location: Location) = withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -70,21 +69,16 @@ class DriveRepo @Inject constructor(
 
     suspend fun stopTrackingDrive() {
         //calculate the distance driven
-        val distanceInMeters = driveDistance.endOfDrive()
+        val distanceInMeters = driveDistance.atEndOfDrive()
 
-        drivesDao.updateTotalDistanceField(
+        drivesDao.updateDriveTotalDistanceField(
             DBTotalDistance(
                 id = currentDriveId,
                 totalDistance = distanceInMeters.toString()
             )
         )
 
-        driveFinishedCallback(
-            FinalDriveInfo(
-                driveName = "Drive $currentDriveId",
-                driveDistance = driveDistance.calculateDistanceForType(distanceInMeters)
-            )
-        )
+        driveFinishedCallback(driveDistance.calculateDistanceForType(distanceInMeters))
 
         //reset the current drive id
         currentDriveId = INVALID_DB_ID

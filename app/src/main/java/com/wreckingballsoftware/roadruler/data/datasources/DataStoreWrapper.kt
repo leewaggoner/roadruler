@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class DataStoreWrapper @Inject constructor(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKey {

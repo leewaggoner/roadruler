@@ -33,8 +33,8 @@ class MainScreenViewModel @Inject constructor(
             onFailure = { },
         )
 
-        driveRepo.setDriveStartedCallback { driveName ->
-            eventHandler(MainScreenEvent.NewDriveStarted(driveName))
+        driveRepo.setDriveStartedCallback { driveId ->
+            eventHandler(MainScreenEvent.NewDriveStarted(driveId))
         }
 
         driveRepo.setDriveFinishedCallback { distance ->
@@ -60,16 +60,13 @@ class MainScreenViewModel @Inject constructor(
                 state = state.copy(transition = event.transition)
             }
             is MainScreenEvent.NewDriveStarted -> {
-                state = state.copy(driveName = event.driveName)
+                state = state.copy(driveId = event.driveId)
             }
             is MainScreenEvent.NewDriveDistance -> {
                 state = state.copy(currentDistance = event.distance)
             }
             is MainScreenEvent.FinalDriveDistance -> {
-                state = state.copy(
-                    driveName = event.driveInfo.driveName,
-                    finalDistance = event.driveInfo.driveDistance
-                )
+                state = state.copy(currentDistance = "Final: ${event.distance}")
             }
         }
     }

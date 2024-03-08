@@ -11,4 +11,5 @@
     <string name="must_allow_activity_recognition_permission">You must grant the physical activity permission for Road Ruler to operate correctly.</string>
     <string name="notification_action_text">Launch Road Ruler.</string>
     <string name="notification_text">Road Ruler is tracking your mileage.</string>
+    <string name="drive_name">Drive %1$d</string>
 </resources>

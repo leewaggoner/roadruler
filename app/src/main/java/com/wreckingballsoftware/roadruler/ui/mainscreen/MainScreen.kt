@@ -8,9 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
 
@@ -47,14 +49,9 @@ fun MainScreenContent(
             Text(
                 text = state.transition,
             )
-            if (state.driveName.isNotEmpty()) {
+            if (state.driveId > 0) {
                 Text(
-                    text = state.driveName,
-                )
-            }
-            if (state.finalDistance.isNotEmpty()) {
-                Text(
-                    text = "Final: ${state.finalDistance}",
+                    text = stringResource(id = R.string.drive_name, state.driveId),
                 )
             }
             if (state.currentDistance.isNotEmpty()) {
@@ -72,7 +69,7 @@ fun MainScreenPreview() {
     MainScreenContent(
         state = MainScreenState(
             transition = "Transition",
-            driveName = "Drive ID",
+            driveId = 1,
             currentDistance = "Trip Distance",
         ),
     )

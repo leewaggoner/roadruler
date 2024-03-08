@@ -6,7 +6,6 @@ import com.wreckingballsoftware.roadruler.utils.metersToMiles
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class DriveDistance @Inject constructor() {
     private var previousLocation: Location? = null
@@ -23,7 +22,7 @@ class DriveDistance @Inject constructor() {
         emitDriveDistance(calculateDistanceForType(driveDistanceInMeters))
     }
 
-    fun endOfDrive() : Float {
+    fun atEndOfDrive() : Float {
         val totalDistance = driveDistanceInMeters
         _currentDistance.value = ""
         previousLocation = null
