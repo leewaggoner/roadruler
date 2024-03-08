@@ -44,18 +44,24 @@ class MileageService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.d("--- ${MileageService::class.simpleName}", "onStartCommand")
-        intent?.let { mileageIntent ->
-            mileageIntent.extras?.let { extras ->
-                if (extras.containsKey(START_TRACKING_MILES)) {
-                    val startTrackingMiles = extras.getBoolean(START_TRACKING_MILES)
-                    if (startTrackingMiles) {
-                        startForeground()
-                        startTrackingMiles()
-                    } else {
-                        stopTrackingMiles()
-                        stopForeground()
-                    }
+        startForeground()
+
+        if (intent == null || intent.extras == null) {
+            stopForeground()
+            return START_STICKY
+        }
+
+        intent.extras?.let { extras ->
+            if (extras.containsKey(START_TRACKING_MILES)) {
+                val startTrackingMiles = extras.getBoolean(START_TRACKING_MILES)
+                if (startTrackingMiles) {
+                    startTrackingMiles()
+                } else {
+                    stopTrackingMiles()
+                    stopForeground()
                 }
+            } else {
+                stopForeground()
             }
         }
         return START_STICKY

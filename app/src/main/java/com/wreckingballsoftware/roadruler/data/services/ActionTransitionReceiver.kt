@@ -57,8 +57,8 @@ class ActionTransitionReceiver : BroadcastReceiver() {
             DetectedActivity.ON_FOOT -> "ON_FOOT"
             DetectedActivity.WALKING -> "WALKING"
             DetectedActivity.RUNNING -> "RUNNING"
-            DetectedActivity.ON_BICYCLE -> "ON_BICYCLE"
-            DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
+            DetectedActivity.ON_BICYCLE -> "BIKING"
+            DetectedActivity.IN_VEHICLE -> "DRIVING"
             else -> "UNKNOWN"
         }
 
