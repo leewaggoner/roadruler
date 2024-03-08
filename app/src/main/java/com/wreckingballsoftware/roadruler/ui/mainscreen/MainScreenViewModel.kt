@@ -48,25 +48,34 @@ class MainScreenViewModel @Inject constructor(
         }
 
         viewModelScope.launch(Dispatchers.Main) {
-            driveRepo.driveDistance.currentDistance.collect { distance ->
+            driveRepo.getCurrentDistance().collect { distance ->
                 eventHandler(MainScreenEvent.NewDriveDistance(distance))
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.Main) {
+            driveRepo.getDrives().collect { drives ->
+                MainScreenEvent.PopulateDrives(drives)
             }
         }
     }
 
     private fun eventHandler(event: MainScreenEvent) {
-        when (event) {
+        state = when (event) {
+            is MainScreenEvent.PopulateDrives -> {
+                state.copy(drives = event.drives)
+            }
             is MainScreenEvent.NewTransition -> {
-                state = state.copy(transition = event.transition)
+                state.copy(transition = event.transition)
             }
             is MainScreenEvent.NewDriveStarted -> {
-                state = state.copy(driveId = event.driveId)
+                state.copy(driveId = event.driveId)
             }
             is MainScreenEvent.NewDriveDistance -> {
-                state = state.copy(currentDistance = event.distance)
+                state.copy(currentDistance = event.distance)
             }
             is MainScreenEvent.FinalDriveDistance -> {
-                state = state.copy(currentDistance = "Final: ${event.distance}")
+                state.copy(currentDistance = "Final: ${event.distance}")
             }
         }
     }

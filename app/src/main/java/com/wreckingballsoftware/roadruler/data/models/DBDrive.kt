@@ -12,6 +12,7 @@ data class DBDrive(
     val id: Long = INVALID_DB_ID,
     @ColumnInfo(name = "user_id")
     val userId: String = "",
+    val name: String = "",
     @ColumnInfo(name = "datetime_created")
     val dateTimeCreated: String = "",
     @ColumnInfo(name = "total_distance")

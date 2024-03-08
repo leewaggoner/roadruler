@@ -8,7 +8,9 @@ import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
 import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
+import com.wreckingballsoftware.roadruler.domain.models.UIDrive
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -22,7 +24,7 @@ class DriveRepo @Inject constructor(
     private val drivesDao: DrivesDao,
     private val driveSegmentsDao: DriveSegmentsDao,
     private val dataStoreWrapper: DataStoreWrapper,
-    val driveDistance: DriveDistance,
+    private val driveDistance: DriveDistance,
 ) {
     private var currentDriveId: Long = INVALID_DB_ID
     private lateinit var userId: String
@@ -36,6 +38,14 @@ class DriveRepo @Inject constructor(
     fun setDriveFinishedCallback(onDriveOver: (String) -> Unit) {
         driveFinishedCallback = onDriveOver
     }
+
+    fun getDrives() = drivesDao.getDrives().map { drives ->
+        drives.map { drive ->
+            drive.toUIDrive()
+        }
+    }
+
+    fun getCurrentDistance() = driveDistance.currentDistance
 
     suspend fun startTrackingDrive(location: Location?) = withContext(kotlinx.coroutines.Dispatchers.IO) {
         userId = dataStoreWrapper.getUserId("")
@@ -84,3 +94,9 @@ class DriveRepo @Inject constructor(
         currentDriveId = INVALID_DB_ID
     }
 }
+
+fun DBDrive.toUIDrive() = UIDrive(
+    driveName = name.ifEmpty { "Drive $id" },
+    driveDistance = totalDistance,
+    driveDateTime = dateTimeCreated
+)

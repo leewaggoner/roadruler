@@ -54,11 +54,11 @@ class ActionTransitionReceiver : BroadcastReceiver() {
     private fun mapActivityToString(event: ActivityTransitionEvent) =
         when (event.activityType) {
             DetectedActivity.STILL -> "STILL"
-            DetectedActivity.ON_FOOT -> "ON_FOOT"
-            DetectedActivity.WALKING -> "WALKING"
-            DetectedActivity.RUNNING -> "RUNNING"
-            DetectedActivity.ON_BICYCLE -> "BIKING"
-            DetectedActivity.IN_VEHICLE -> "DRIVING"
+            DetectedActivity.ON_FOOT -> "STAND"
+            DetectedActivity.WALKING -> "WALK"
+            DetectedActivity.RUNNING -> "RUN"
+            DetectedActivity.ON_BICYCLE -> "BIKE"
+            DetectedActivity.IN_VEHICLE -> "DRIVE"
             else -> "UNKNOWN"
         }
 

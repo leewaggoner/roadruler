@@ -7,9 +7,13 @@ import androidx.room.Query
 import androidx.room.Update
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
 import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DrivesDao {
+    @Query("SELECT * FROM drives")
+    fun getDrives(): Flow<List<DBDrive>>
+
     @Query("SELECT * FROM drives WHERE id = :driveId")
     suspend fun getDrive(driveId: Long): DBDrive
 
