@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class DriveDistance @Inject constructor() {
     private var previousLocation: Location? = null
     private var driveDistanceInMeters: Float = 0f

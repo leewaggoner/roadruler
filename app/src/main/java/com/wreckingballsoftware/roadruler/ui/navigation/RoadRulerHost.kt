@@ -17,14 +17,13 @@ fun RoadRulerHost() {
 
     val startDestination = Destinations.MainScreen
 
-    val startupPermissions = mutableListOf<String>()
-    startupPermissions.apply {
+    val startupPermissions = mutableListOf<String>().apply {
         add(android.Manifest.permission.ACCESS_FINE_LOCATION)
         add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             add(android.Manifest.permission.ACTIVITY_RECOGNITION)
         }
-    }
+    }.toList()
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(route = Destinations.MainScreen) {

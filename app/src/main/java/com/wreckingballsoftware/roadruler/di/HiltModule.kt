@@ -29,7 +29,6 @@ private const val DB_NAME = "road_ruler_db"
 @Module
 object HiltModule {
     @Provides
-    @Singleton
     fun provideFusedLocationProviderClient(@ApplicationContext context: Context) =
         LocationServices.getFusedLocationProviderClient(context)
 

@@ -13,7 +13,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class DataStoreWrapper @Inject constructor(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKey {
         val USER_ID = stringPreferencesKey("UserId")
