@@ -55,7 +55,7 @@ class MainScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             driveRepo.getDrives().collect { drives ->
-                MainScreenEvent.PopulateDrives(drives)
+                eventHandler(MainScreenEvent.PopulateDrives(drives))
             }
         }
     }

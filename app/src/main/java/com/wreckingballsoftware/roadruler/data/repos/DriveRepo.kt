@@ -1,6 +1,7 @@
 package com.wreckingballsoftware.roadruler.data.repos
 
 import android.location.Location
+import android.util.Log
 import com.wreckingballsoftware.roadruler.data.datasources.DataStoreWrapper
 import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
@@ -56,6 +57,7 @@ class DriveRepo @Inject constructor(
                 dateTimeCreated = dateTime,
             )
         )
+        Log.d("--- ${DriveRepo::class.simpleName}", "Started new drive: $currentDriveId")
         location?.let { loc ->
             newSegment(loc)
         }
@@ -88,7 +90,9 @@ class DriveRepo @Inject constructor(
             )
         )
 
-        driveFinishedCallback(driveDistance.calculateDistanceForType(distanceInMeters))
+        val finalDistance = driveDistance.calculateDistanceForType(distanceInMeters)
+        Log.d("--- ${DriveRepo::class.simpleName}", "Drive $currentDriveId finished. Distance: $finalDistance")
+        driveFinishedCallback(finalDistance)
 
         //reset the current drive id
         currentDriveId = INVALID_DB_ID

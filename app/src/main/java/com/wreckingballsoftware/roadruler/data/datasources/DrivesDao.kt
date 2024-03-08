@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DrivesDao {
-    @Query("SELECT * FROM drives")
+    @Query("SELECT * FROM drives ORDER BY id DESC")
     fun getDrives(): Flow<List<DBDrive>>
 
     @Query("SELECT * FROM drives WHERE id = :driveId")
