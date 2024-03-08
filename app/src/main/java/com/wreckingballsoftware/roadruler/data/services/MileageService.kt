@@ -68,6 +68,7 @@ class MileageService : LifecycleService() {
     }
 
     private fun startForeground() {
+        Log.d("--- ${MileageService::class.simpleName}", "Start Foreground")
         ServiceCompat.startForeground(
             this,
             NOTIFICATION_ID,
@@ -106,6 +107,7 @@ class MileageService : LifecycleService() {
     }
 
     private fun stopForeground() {
+        Log.d("--- ${MileageService::class.simpleName}", "Stop Foreground")
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
         stopSelf()
     }
