@@ -88,7 +88,7 @@ class MileageService : LifecycleService() {
                 locationTracker.getCurrentLocation { loc ->
                     location = loc
                 }
-                Log.d("--- ${MileageService::class.simpleName}", "Initial ocation: $location")
+                Log.d("--- ${MileageService::class.simpleName}", "Initial location: $location")
                 driveRepo.startTrackingDrive(location)
                 locationTracker.startTrackingMiles(locationCallback)
             }
