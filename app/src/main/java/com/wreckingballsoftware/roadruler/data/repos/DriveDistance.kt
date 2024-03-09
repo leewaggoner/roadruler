@@ -43,14 +43,22 @@ class DriveDistance @Inject constructor() {
         }
     }
 
+    fun calculateDistanceForType(distance: String): String {
+        val bdDistance = distance.toBigDecimal()
+        return when (distanceDisplayType) {
+            DistanceType.MILES -> bdDistance.metersToMiles().toString()
+            DistanceType.KILOMETERS -> bdDistance.metersToKilometers().toString()
+        }
+    }
+
     private fun emitDriveDistance(distance: String) {
         _currentDistance.value = distance
     }
 
     companion object {
-        enum class DistanceType {
-            MILES,
-            KILOMETERS
+        enum class DistanceType(val displayName: String) {
+            MILES("m"),
+            KILOMETERS("km"),
         }
     }
 }

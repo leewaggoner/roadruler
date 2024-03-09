@@ -11,6 +11,7 @@ import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.domain.models.UIDrive
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
+import com.wreckingballsoftware.roadruler.utils.iso8601ToUITimeString
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -42,7 +43,7 @@ class DriveRepo @Inject constructor(
 
     fun getDrives() = drivesDao.getDrives().map { drives ->
         drives.map { drive ->
-            drive.toUIDrive()
+            drive.toUIDrive(driveDistance)
         }
     }
 
@@ -91,7 +92,10 @@ class DriveRepo @Inject constructor(
         )
 
         val finalDistance = driveDistance.calculateDistanceForType(distanceInMeters)
-        Log.d("--- ${DriveRepo::class.simpleName}", "Drive $currentDriveId finished. Distance: $finalDistance")
+        Log.d(
+            "--- ${DriveRepo::class.simpleName}",
+            "Drive $currentDriveId finished. Distance: $finalDistance"
+        )
         driveFinishedCallback(finalDistance)
 
         //reset the current drive id
@@ -99,8 +103,8 @@ class DriveRepo @Inject constructor(
     }
 }
 
-fun DBDrive.toUIDrive() = UIDrive(
+fun DBDrive.toUIDrive(driveDistance: DriveDistance) = UIDrive(
     driveName = name.ifEmpty { "Drive $id" },
-    driveDistance = totalDistance,
-    driveDateTime = dateTimeCreated
+    driveDistance = "${driveDistance.calculateDistanceForType(totalDistance)}${driveDistance.distanceDisplayType.displayName}",
+    driveDateTime = dateTimeCreated.iso8601ToUITimeString()
 )
