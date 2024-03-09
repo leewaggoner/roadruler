@@ -44,7 +44,7 @@ class DriveDistance @Inject constructor() {
     }
 
     fun calculateDistanceForType(distance: String): String {
-        val bdDistance = distance.toBigDecimal()
+        val bdDistance = distance.ifEmpty { "0.0" }.toBigDecimal()
         return when (distanceDisplayType) {
             DistanceType.MILES -> bdDistance.metersToMiles().toString()
             DistanceType.KILOMETERS -> bdDistance.metersToKilometers().toString()
