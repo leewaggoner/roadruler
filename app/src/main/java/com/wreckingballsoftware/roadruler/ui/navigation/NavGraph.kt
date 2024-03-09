@@ -14,4 +14,12 @@ class NavGraph(navController: NavController) {
             launchSingleTop = true
         }
     }
+    val navigateToDisplayCocktail: (Long) -> Unit = { driveId ->
+        navController.navigate(
+            Destinations.DriveScreen.replace(
+                oldValue = "{driveId}",
+                newValue = driveId.toString()
+            )
+        )
+    }
 }

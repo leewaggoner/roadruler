@@ -3,11 +3,14 @@ package com.wreckingballsoftware.roadruler.ui.navigation
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.compose.CheckPermissions
+import com.wreckingballsoftware.roadruler.ui.drivescreen.DriveScreen
 import com.wreckingballsoftware.roadruler.ui.mainscreen.MainScreen
 
 @Composable
@@ -43,6 +46,17 @@ fun RoadRulerHost() {
                 } else {
                     MainScreen(navGraph = navGraph)
                 }
+            }
+        }
+        composable(
+            Destinations.DriveScreen,
+            arguments = listOf(navArgument("driveId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val driveId = backStackEntry.arguments?.getLong("driveId")
+            driveId?.let { id ->
+                DriveScreen(
+                    navGraph = navGraph,
+                )
             }
         }
     }

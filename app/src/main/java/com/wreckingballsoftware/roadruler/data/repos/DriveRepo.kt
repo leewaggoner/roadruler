@@ -11,7 +11,8 @@ import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.domain.models.UIDrive
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
-import com.wreckingballsoftware.roadruler.utils.iso8601ToUITimeString
+import com.wreckingballsoftware.roadruler.utils.iso8601ToUIDateString
+import com.wreckingballsoftware.roadruler.utils.iso8601ToUIDateTimeString
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -43,9 +44,11 @@ class DriveRepo @Inject constructor(
 
     fun getDrives() = drivesDao.getDrives().map { drives ->
         drives.map { drive ->
-            drive.toUIDrive(driveDistance)
+            drive.toMainScreenDrive(driveDistance)
         }
     }
+
+    suspend fun getDrive(driveId: Long) = drivesDao.getDrive(driveId).toDriveScreenDrive(driveDistance)
 
     fun getCurrentDistance() = driveDistance.currentDistance
 
@@ -103,8 +106,18 @@ class DriveRepo @Inject constructor(
     }
 }
 
-fun DBDrive.toUIDrive(driveDistance: DriveDistance) = UIDrive(
+fun DBDrive.toMainScreenDrive(driveDistance: DriveDistance) = UIDrive(
+    driveId = id,
     driveName = name.ifEmpty { "Drive $id" },
     driveDistance = "${driveDistance.calculateDistanceForType(totalDistance)}${driveDistance.distanceDisplayType.displayName}",
-    driveDateTime = dateTimeCreated.iso8601ToUITimeString()
+    driveDateTime = dateTimeCreated.iso8601ToUIDateString()
+)
+
+fun DBDrive.toDriveScreenDrive(driveDistance: DriveDistance) = UIDrive(
+    driveId = id,
+    driveName = name.ifEmpty { "Drive $id" },
+    driveDistance =
+        "${driveDistance.calculateDistanceForType(totalDistance)} " +
+        driveDistance.distanceDisplayType.name.lowercase().replaceFirstChar(Char::titlecase),
+    driveDateTime = dateTimeCreated.iso8601ToUIDateTimeString()
 )

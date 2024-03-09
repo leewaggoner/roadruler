@@ -12,4 +12,5 @@
     <string name="notification_action_text">Launch Road Ruler.</string>
     <string name="notification_text">Road Ruler is tracking your mileage.</string>
     <string name="drive_name">Drive %1$d</string>
+    <string name="rename_drive">Rename Drive</string>
 </resources>

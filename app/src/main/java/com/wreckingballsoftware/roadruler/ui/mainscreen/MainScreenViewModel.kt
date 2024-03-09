@@ -6,12 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
 import com.wreckingballsoftware.roadruler.data.repos.DriveRepo
 import com.wreckingballsoftware.roadruler.data.services.ActionTransition
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
+import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenNavigation
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +30,10 @@ class MainScreenViewModel @Inject constructor(
     var state by handle.saveable {
         mutableStateOf(MainScreenState())
     }
+    val navigation = MutableSharedFlow<MainScreenNavigation>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_LATEST,
+    )
 
     init {
         actionTransition.startTracking(
@@ -60,7 +68,7 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    private fun eventHandler(event: MainScreenEvent) {
+    fun eventHandler(event: MainScreenEvent) {
         state = when (event) {
             is MainScreenEvent.PopulateDrives -> {
                 state.copy(drives = event.drives)
@@ -76,6 +84,18 @@ class MainScreenViewModel @Inject constructor(
             }
             is MainScreenEvent.FinalDriveDistance -> {
                 state.copy(currentDistance = "Final: ${event.distance}")
+            }
+            is MainScreenEvent.DriveSelected -> {
+                handleDriveSelected(event.driveId)
+                state
+            }
+        }
+    }
+
+    private fun handleDriveSelected(driveId: Long) {
+        if (driveId != INVALID_DB_ID) {
+            viewModelScope.launch(Dispatchers.Main) {
+                navigation.emit(MainScreenNavigation.DisplayDrive(driveId))
             }
         }
     }

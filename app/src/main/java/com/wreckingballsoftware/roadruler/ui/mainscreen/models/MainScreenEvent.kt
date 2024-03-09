@@ -8,4 +8,5 @@ sealed interface MainScreenEvent {
     data class NewDriveStarted(val driveId: Long) : MainScreenEvent
     data class NewDriveDistance(val distance: String) : MainScreenEvent
     data class FinalDriveDistance(val distance: String) : MainScreenEvent
+    data class DriveSelected(val driveId: Long) : MainScreenEvent
 }
