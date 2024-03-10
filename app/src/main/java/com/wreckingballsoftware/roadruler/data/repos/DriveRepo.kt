@@ -13,6 +13,7 @@ import com.wreckingballsoftware.roadruler.domain.models.UIDrive
 import com.wreckingballsoftware.roadruler.utils.asISO8601String
 import com.wreckingballsoftware.roadruler.utils.iso8601ToUIDateString
 import com.wreckingballsoftware.roadruler.utils.iso8601ToUIDateTimeString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -52,7 +53,7 @@ class DriveRepo @Inject constructor(
 
     fun getCurrentDistance() = driveDistance.currentDistance
 
-    suspend fun startTrackingDrive(location: Location?) = withContext(kotlinx.coroutines.Dispatchers.IO) {
+    suspend fun startTrackingDrive(startLocation: Location?) = withContext(Dispatchers.IO) {
         userId = dataStoreWrapper.getUserId("")
         val dateTime = OffsetDateTime.now(ZoneOffset.systemDefault()).asISO8601String()
         currentDriveId = drivesDao.insertDrive(
@@ -62,13 +63,13 @@ class DriveRepo @Inject constructor(
             )
         )
         Log.d("--- ${DriveRepo::class.simpleName}", "Started new drive: $currentDriveId")
-        location?.let { loc ->
+        startLocation?.let { loc ->
             newSegment(loc)
         }
         driveStartedCallback(currentDriveId)
     }
 
-    suspend fun newSegment(location: Location) = withContext(kotlinx.coroutines.Dispatchers.IO) {
+    suspend fun newSegment(location: Location) = withContext(Dispatchers.IO) {
         driveDistance.calculateCurrentDistance(location)
         val dateTime = OffsetDateTime.ofInstant(
             Instant.ofEpochMilli(location.time),
@@ -83,7 +84,7 @@ class DriveRepo @Inject constructor(
         )
     }
 
-    suspend fun stopTrackingDrive() {
+    suspend fun stopTrackingDrive() = withContext(Dispatchers.IO) {
         //calculate the distance driven
         val distanceInMeters = driveDistance.atEndOfDrive()
 
