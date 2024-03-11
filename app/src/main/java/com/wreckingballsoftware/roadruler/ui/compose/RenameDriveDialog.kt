@@ -21,14 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
+import com.wreckingballsoftware.roadruler.ui.theme.customTypography
 import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +54,7 @@ fun RenameDriveDialog(
             ) {
                 Text(
                     text = stringResource(id = R.string.rename_drive),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.customTypography.headline,
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
                 OutlinedTextField(

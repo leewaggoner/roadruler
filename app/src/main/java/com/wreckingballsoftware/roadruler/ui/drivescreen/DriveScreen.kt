@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wreckingballsoftware.roadruler.R
+import com.wreckingballsoftware.roadruler.domain.models.UIDrive
 import com.wreckingballsoftware.roadruler.ui.compose.RenameDriveDialog
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
+import com.wreckingballsoftware.roadruler.ui.theme.customTypography
 import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @Composable
@@ -64,18 +64,17 @@ fun DriveScreenContent(
         ) {
             Text(
                 text = state.drive.driveName,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.customTypography.headline,
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
                 text = state.drive.driveDateTime,
-                fontSize = 16.sp,
+                style = MaterialTheme.customTypography.centerBody,
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
                 text = state.drive.driveDistance,
-                fontSize = 16.sp,
+                style = MaterialTheme.customTypography.title,
             )
         }
         Button(
@@ -94,7 +93,15 @@ fun DriveScreenContent(
 @Composable
 fun DriveScreenContentPreview() {
     DriveScreenContent(
-        state = DriveScreenState(),
+        state = DriveScreenState(
+            drive = UIDrive(
+                driveId = 1,
+                driveName = "Drive 1",
+                driveDateTime = "2021-10-01 12:00:00",
+                driveDistance = "100 miles"
+            ),
+            displayEditDialog = false
+        ),
         eventHandler = { }
     )
 }

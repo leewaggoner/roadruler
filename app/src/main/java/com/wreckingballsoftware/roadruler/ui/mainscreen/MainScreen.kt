@@ -10,22 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.domain.models.UIDrive
+import com.wreckingballsoftware.roadruler.ui.compose.EllipsizedText
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenNavigation
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
+import com.wreckingballsoftware.roadruler.ui.theme.customTypography
 import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @Composable
@@ -70,31 +69,28 @@ fun MainScreenContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.rowSpaceSmall),
         ) {
-            Text(
+            EllipsizedText(
                 modifier = Modifier
                     .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                     .weight(1f),
                 text = state.transition,
-                textAlign = TextAlign.Start,
+                style = MaterialTheme.customTypography.startBody,
             )
-            if (state.driveId > 0) {
-                Text(
-                    modifier = Modifier
-                        .padding(vertical = MaterialTheme.dimensions.spaceMedium)
-                        .weight(1f),
-                    text = stringResource(id = R.string.drive_name, state.driveId),
-                    textAlign = TextAlign.Center,
-                )
-            }
-            if (state.currentDistance.isNotEmpty()) {
-                    Text(
-                        modifier = Modifier
-                            .padding(vertical = MaterialTheme.dimensions.spaceMedium)
-                            .weight(1f),
-                        text = state.currentDistance,
-                        textAlign = TextAlign.End,
-                    )
-                }
+            EllipsizedText(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.dimensions.spaceMedium)
+                    .weight(1f),
+                //TODO: use actual drive name
+                text = if (state.driveId > 0) stringResource(id = R.string.drive_name, state.driveId) else "",
+                style = MaterialTheme.customTypography.centerBody,
+            )
+            EllipsizedText(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.dimensions.spaceMedium)
+                    .weight(1f),
+                text = state.currentDistance,
+                style = MaterialTheme.customTypography.endBody,
+            )
         }
         Divider()
         LazyColumn(
@@ -105,36 +101,35 @@ fun MainScreenContent(
                 val drive = state.drives[index]
                 Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .clickable { eventHandler(MainScreenEvent.DriveSelected(drive.driveId)) },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(
                         MaterialTheme.dimensions.rowSpaceSmall
                     ),
                 ) {
-                    Text(
+                    EllipsizedText(
                         modifier = Modifier
                             .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveName,
-                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.customTypography.startBody,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
                     )
-                    Text(
+                    EllipsizedText(
                         modifier = Modifier
                             .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveDateTime,
-                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.customTypography.centerBody,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
                     )
-                    Text(
+                    EllipsizedText(
                         modifier = Modifier
                             .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveDistance,
-                        textAlign = TextAlign.End,
+                        style = MaterialTheme.customTypography.endBody,
                         maxLines = 2,
                     )
                 }

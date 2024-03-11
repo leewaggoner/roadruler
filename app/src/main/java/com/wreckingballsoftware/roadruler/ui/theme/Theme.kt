@@ -64,7 +64,7 @@ fun RoadRulerTheme(
     }
 
     CompositionLocalProvider(
-//        LocalCustomTypography provides CustomTypeStyles(),
+        LocalCustomTypography provides CustomTypeStyles(),
         LocalDimensions provides Dimensions(),
     ) {
         MaterialTheme(
