@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class DriveDistance @Inject constructor() {
     private var previousLocation: Location? = null
     private var driveDistanceInMeters: Float = 0f
-    private val _currentDistance = MutableStateFlow("")
+    private val _currentDistance = MutableStateFlow("0.0${DistanceType.MILES.displayName}")
     val currentDistance: StateFlow<String> = _currentDistance
     var distanceDisplayType = DistanceType.MILES
 
@@ -23,13 +23,13 @@ class DriveDistance @Inject constructor() {
         }
         previousLocation = location
         val newDistance = calculateDistanceForType(driveDistanceInMeters)
-        emitDriveDistance(newDistance)
+        emitDriveDistance("${newDistance}${distanceDisplayType.displayName}")
         Log.d("--- ${DriveDistance::class.simpleName}", "Emitted new distance: $newDistance")
     }
 
     fun atEndOfDrive() : Float {
         val totalDistance = driveDistanceInMeters
-        _currentDistance.value = ""
+        _currentDistance.value = "0.0${distanceDisplayType.displayName}"
         previousLocation = null
         driveDistanceInMeters = 0f
         return totalDistance
