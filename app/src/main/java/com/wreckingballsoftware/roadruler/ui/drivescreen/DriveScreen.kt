@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.compose.RenameDriveDialog
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
+import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @Composable
 fun DriveScreen(
@@ -47,8 +48,11 @@ fun DriveScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 16.dp, bottom = 32.dp)
-            .padding(horizontal = 16.dp),
+            .padding(
+                top = MaterialTheme.dimensions.spaceSmall,
+                bottom = MaterialTheme.dimensions.spaceMedium
+            )
+            .padding(horizontal = MaterialTheme.dimensions.padding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
@@ -63,12 +67,12 @@ fun DriveScreenContent(
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
                 text = state.drive.driveDateTime,
                 fontSize = 16.sp,
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
             Text(
                 text = state.drive.driveDistance,
                 fontSize = 16.sp,

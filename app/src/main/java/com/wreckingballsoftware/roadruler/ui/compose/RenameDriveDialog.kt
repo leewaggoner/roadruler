@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +24,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.wreckingballsoftware.roadruler.R
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
+import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,12 +43,12 @@ fun RenameDriveDialog(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(MaterialTheme.dimensions.padding),
+            shape = RoundedCornerShape(MaterialTheme.dimensions.cardCornerSize),
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(MaterialTheme.dimensions.padding)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +58,7 @@ fun RenameDriveDialog(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                 )
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
                 OutlinedTextField(
                     value = state.driveName,
                     onValueChange = { name ->
@@ -77,15 +78,17 @@ fun RenameDriveDialog(
                         }
                     ),
                 )
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spaceMedium))
                 Column {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            MaterialTheme.dimensions.spaceSmall
+                        ),
 
                         ) {
                         Button(
                             modifier = Modifier
-                                .width(100.dp),
+                                .width(MaterialTheme.dimensions.buttonWidth),
                             onClick = {
                                 eventHandler(DriveScreenEvent.OnDismissDialog)
                             }
@@ -96,7 +99,7 @@ fun RenameDriveDialog(
                         }
                         Button(
                             modifier = Modifier
-                                .width(100.dp),
+                                .width(MaterialTheme.dimensions.buttonWidth),
                             onClick = {
                                 if (state.driveName.isNotEmpty()) {
                                     eventHandler(DriveScreenEvent.UpdateDriveName)

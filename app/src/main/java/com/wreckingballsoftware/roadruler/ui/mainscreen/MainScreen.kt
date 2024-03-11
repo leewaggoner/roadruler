@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wreckingballsoftware.roadruler.R
@@ -27,6 +26,7 @@ import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenEvent
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenNavigation
 import com.wreckingballsoftware.roadruler.ui.mainscreen.models.MainScreenState
 import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
+import com.wreckingballsoftware.roadruler.ui.theme.dimensions
 
 @Composable
 fun MainScreen(
@@ -61,27 +61,27 @@ fun MainScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 32.dp)
-            .padding(horizontal = 16.dp)
+            .padding(bottom = MaterialTheme.dimensions.spaceMedium)
+            .padding(horizontal = MaterialTheme.dimensions.padding),
     ) {
         Row(
             modifier = Modifier
-                .height(80.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.rowSpaceSmall),
         ) {
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.5f),
+                    .padding(vertical = MaterialTheme.dimensions.spaceMedium)
+                    .weight(1f),
                 text = state.transition,
                 textAlign = TextAlign.Start,
             )
             if (state.driveId > 0) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.5f),
+                        .padding(vertical = MaterialTheme.dimensions.spaceMedium)
+                        .weight(1f),
                     text = stringResource(id = R.string.drive_name, state.driveId),
                     textAlign = TextAlign.Center,
                 )
@@ -89,8 +89,8 @@ fun MainScreenContent(
             if (state.currentDistance.isNotEmpty()) {
                     Text(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.5f),
+                            .padding(vertical = MaterialTheme.dimensions.spaceMedium)
+                            .weight(1f),
                         text = state.currentDistance,
                         textAlign = TextAlign.End,
                     )
@@ -107,11 +107,13 @@ fun MainScreenContent(
                     modifier = Modifier
                         .clickable { eventHandler(MainScreenEvent.DriveSelected(drive.driveId)) },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        MaterialTheme.dimensions.rowSpaceSmall
+                    ),
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(vertical = 32.dp)
+                            .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveName,
                         textAlign = TextAlign.Start,
@@ -120,7 +122,7 @@ fun MainScreenContent(
                     )
                     Text(
                         modifier = Modifier
-                            .padding(all = 8.dp)
+                            .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveDateTime,
                         textAlign = TextAlign.Center,
@@ -129,7 +131,7 @@ fun MainScreenContent(
                     )
                     Text(
                         modifier = Modifier
-                            .padding(all = 8.dp)
+                            .padding(vertical = MaterialTheme.dimensions.spaceMedium)
                             .weight(1f),
                         text = drive.driveDistance,
                         textAlign = TextAlign.End,

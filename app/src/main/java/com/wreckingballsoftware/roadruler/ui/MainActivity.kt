@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             RoadRulerTheme(
                 darkTheme = true,
+                dynamicColor = false,
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
