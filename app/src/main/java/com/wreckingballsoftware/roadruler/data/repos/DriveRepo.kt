@@ -6,6 +6,7 @@ import com.wreckingballsoftware.roadruler.data.datasources.DataStoreWrapper
 import com.wreckingballsoftware.roadruler.data.datasources.DriveSegmentsDao
 import com.wreckingballsoftware.roadruler.data.datasources.DrivesDao
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
+import com.wreckingballsoftware.roadruler.data.models.DBDriveName
 import com.wreckingballsoftware.roadruler.data.models.DBDriveSegment
 import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import com.wreckingballsoftware.roadruler.data.models.INVALID_DB_ID
@@ -49,9 +50,13 @@ class DriveRepo @Inject constructor(
         }
     }
 
+    fun getCurrentDistance() = driveDistance.currentDistance
+
     suspend fun getDrive(driveId: Long) = drivesDao.getDrive(driveId).toDriveScreenDrive(driveDistance)
 
-    fun getCurrentDistance() = driveDistance.currentDistance
+    suspend fun renameDrive(id: Long, name: String) = withContext(Dispatchers.IO) {
+        drivesDao.updateDrive(DBDriveName(id = id, name = name))
+    }
 
     suspend fun startTrackingDrive(startLocation: Location?) = withContext(Dispatchers.IO) {
         userId = dataStoreWrapper.getUserId("")

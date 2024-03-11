@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class DriveScreenState(
     val drive: UIDrive = UIDrive(),
+    val driveName: String = "",
     val displayEditDialog: Boolean = false,
 ) : Parcelable

@@ -51,13 +51,8 @@ fun RoadRulerHost() {
         composable(
             Destinations.DriveScreen,
             arguments = listOf(navArgument("driveId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val driveId = backStackEntry.arguments?.getLong("driveId")
-            driveId?.let { id ->
-                DriveScreen(
-                    navGraph = navGraph,
-                )
-            }
+        ) {
+            DriveScreen()
         }
     }
 }

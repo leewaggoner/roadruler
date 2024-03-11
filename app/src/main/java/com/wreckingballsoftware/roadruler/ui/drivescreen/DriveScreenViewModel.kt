@@ -1,5 +1,6 @@
 package com.wreckingballsoftware.roadruler.ui.drivescreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DriveScreenViewModel @Inject constructor(
     handle: SavedStateHandle,
-    driveRepo: DriveRepo,
+    private val driveRepo: DriveRepo,
 ) : ViewModel() {
     @OptIn(SavedStateHandleSaveableApi::class)
     var state by handle.saveable {
@@ -33,12 +34,9 @@ class DriveScreenViewModel @Inject constructor(
                 val drive = driveRepo.getDrive(driveId)
                 eventHandler(DriveScreenEvent.Initialize(drive))
             }
+        } else {
+            Log.d("---${DriveScreenViewModel::class.simpleName}", "No driveId found")
         }
-    }
-
-    fun onRenameDrive() {
-        val drive = state.drive
-        eventHandler(DriveScreenEvent.Initialize(drive))
     }
 
     fun eventHandler(event: DriveScreenEvent) {
@@ -46,9 +44,28 @@ class DriveScreenViewModel @Inject constructor(
             is DriveScreenEvent.Initialize -> {
                 state.copy(drive = event.drive, displayEditDialog = false)
             }
-            DriveScreenEvent.RenameDrive -> {
-                state.copy(displayEditDialog = true)
+            DriveScreenEvent.OnDisplayDialog -> {
+                state.copy(driveName = state.drive.driveName, displayEditDialog = true)
             }
+            DriveScreenEvent.OnDismissDialog -> {
+                state.copy(displayEditDialog = false)
+            }
+            is DriveScreenEvent.OnDriveNameChange -> {
+                state.copy(driveName = event.name)
+            }
+            DriveScreenEvent.UpdateDriveName -> {
+                onUpdateDriveName()
+                state.copy(displayEditDialog = false)
+            }
+        }
+    }
+
+    private fun onUpdateDriveName() {
+        viewModelScope.launch(Dispatchers.Main) {
+            driveRepo.renameDrive(driveId, state.driveName)
+            val drive = driveRepo.getDrive(driveId)
+            eventHandler(DriveScreenEvent.Initialize(drive))
+            state = state.copy(drive = drive)
         }
     }
 }

@@ -1,0 +1,124 @@
+package com.wreckingballsoftware.roadruler.ui.compose
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.wreckingballsoftware.roadruler.R
+import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
+import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RenameDriveDialog(
+    state: DriveScreenState,
+    eventHandler: (DriveScreenEvent) -> Unit,
+) {
+    Dialog(
+        onDismissRequest = { eventHandler(DriveScreenEvent.OnDismissDialog) }
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.rename_drive),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                OutlinedTextField(
+                    value = state.driveName,
+                    onValueChange = { name ->
+                        eventHandler(DriveScreenEvent.OnDriveNameChange(name))
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.drive_name_label),
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Send,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSend = {
+                            eventHandler(DriveScreenEvent.UpdateDriveName)
+                        }
+                    ),
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+
+                        ) {
+                        Button(
+                            modifier = Modifier
+                                .width(100.dp),
+                            onClick = {
+                                eventHandler(DriveScreenEvent.OnDismissDialog)
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel),
+                            )
+                        }
+                        Button(
+                            modifier = Modifier
+                                .width(100.dp),
+                            onClick = {
+                                if (state.driveName.isNotEmpty()) {
+                                    eventHandler(DriveScreenEvent.UpdateDriveName)
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.update),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(name = "RenameDriveDialog Preview", showBackground = true)
+@Composable
+fun RenameDriveDialogPreview() {
+    RenameDriveDialog(
+        state = DriveScreenState(),
+        eventHandler = { },
+    )
+}

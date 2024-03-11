@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.wreckingballsoftware.roadruler.data.models.DBDrive
+import com.wreckingballsoftware.roadruler.data.models.DBDriveName
 import com.wreckingballsoftware.roadruler.data.models.DBTotalDistance
 import kotlinx.coroutines.flow.Flow
 
@@ -22,4 +23,7 @@ interface DrivesDao {
 
     @Update(entity = DBDrive::class)
     suspend fun updateDriveTotalDistanceField(distance: DBTotalDistance)
+
+    @Update(entity = DBDrive::class)
+    suspend fun updateDrive(drive: DBDriveName)
 }

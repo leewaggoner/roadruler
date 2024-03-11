@@ -18,14 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.wreckingballsoftware.roadruler.R
-import com.wreckingballsoftware.roadruler.ui.compose.RoadRulerAlert
+import com.wreckingballsoftware.roadruler.ui.compose.RenameDriveDialog
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenEvent
 import com.wreckingballsoftware.roadruler.ui.drivescreen.models.DriveScreenState
-import com.wreckingballsoftware.roadruler.ui.navigation.NavGraph
 
 @Composable
 fun DriveScreen(
-    navGraph: NavGraph,
     viewModel: DriveScreenViewModel = hiltViewModel()
 ) {
     DriveScreenContent(
@@ -34,12 +32,9 @@ fun DriveScreen(
     )
 
     if (viewModel.state.displayEditDialog) {
-        RoadRulerAlert(
-            title = stringResource(id = R.string.rename_drive),
-            message = viewModel.state.drive.driveName,
-            onDismissRequest = { viewModel.eventHandler(DriveScreenEvent.Initialize(viewModel.state.drive)) },
-            onConfirmAlert = { viewModel.eventHandler(DriveScreenEvent.Initialize(viewModel.state.drive)) },
-            onDismissAlert = { viewModel.eventHandler(DriveScreenEvent.Initialize(viewModel.state.drive)) }
+        RenameDriveDialog(
+            state = viewModel.state,
+            eventHandler = viewModel::eventHandler
         )
     }
 }
@@ -81,7 +76,7 @@ fun DriveScreenContent(
         }
         Button(
             onClick = {
-                eventHandler(DriveScreenEvent.RenameDrive)
+                eventHandler(DriveScreenEvent.OnDisplayDialog)
             },
         ) {
             Text(
