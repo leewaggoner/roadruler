@@ -28,7 +28,7 @@ class DriveDistanceTest {
     }
 
     @Test
-    fun atEndOfDrive() {
+    fun `atEndOfDrive returns correct value and zeroes attributes correctly`() {
         every { location.distanceTo(location) } returns 1609.34f
         driveDistance.calculateCurrentDistance(location)
         driveDistance.calculateCurrentDistance(location)
@@ -37,23 +37,23 @@ class DriveDistanceTest {
     }
 
     @Test
-    fun calculateMilesDistanceForTypeWithFloat() {
+    fun `calculateDistanceForType is correct for miles with Float parameter`() {
         assertEquals("1.0", driveDistance.calculateDistanceForType(1609.34f))
     }
 
     @Test
-    fun calculateMilesDistanceForTypeWithString() {
+    fun `calculateDistanceForType is correct for miles with String parameter`() {
         assertEquals("1.0", driveDistance.calculateDistanceForType("1609.34"))
     }
 
     @Test
-    fun calculateKilometersDistanceForTypeWithFloat() {
+    fun `calculateDistanceForType is correct for kilometers with Float parameter`() {
         driveDistance.distanceDisplayType = DistanceType.KILOMETERS
         assertEquals("1.0", driveDistance.calculateDistanceForType(1000.0f))
     }
 
     @Test
-    fun calculateKilometersDistanceForTypeWithString() {
+    fun `calculateDistanceForType is correct for kilometers with String parameter`() {
         driveDistance.distanceDisplayType = DistanceType.KILOMETERS
         assertEquals("1.0", driveDistance.calculateDistanceForType("1000.0"))
     }
