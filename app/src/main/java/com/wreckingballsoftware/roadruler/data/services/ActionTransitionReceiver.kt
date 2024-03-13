@@ -32,9 +32,10 @@ class ActionTransitionReceiver : BroadcastReceiver() {
     private fun processTransitionResults(context: Context, transitionEvents: List<ActivityTransitionEvent>) {
         //if driving, start location service
         for (event in transitionEvents) {
-            val transition = "${mapTransitionToString(event)} ${mapActivityToString(event)}"
+            val uiTransition = mapActivityToString(event)
+            val transition = "${mapTransitionToString(event)} $uiTransition"
             Log.d("--- ${ActionTransitionReceiver::class.simpleName}", "Transition: $transition")
-            actionTransition.onDetectedTransitionEvent(transition)
+            actionTransition.onDetectedTransitionEvent(uiTransition)
 
             if (event.activityType == DetectedActivity.IN_VEHICLE) {
                 val intent = Intent(context, MileageService::class.java)
